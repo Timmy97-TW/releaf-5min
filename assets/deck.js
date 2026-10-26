@@ -1,0 +1,400 @@
+/* ReLEAF — 5-minute judging presentation
+   One slide source, two views: the vertical reading page and the slideshow.
+   Every slide is authored on a 1600x900 stage; the body box is 1448x652 at (76,190). */
+
+const F = (src, alt, h, cls, d) =>
+  `<figure class="fig ${cls || ''} st zoom" style="height:${h}px;--d:${d || 0}">` +
+  `<img src="img/${src}.webp" alt="${alt}"></figure>`;
+
+const SLIDES = [
+  /* ---------------------------------------------------------- 1 */
+  {
+    n: 1, time: '0:00', secs: 50,
+    kicker: 'The problem',
+    title: 'On-site biomanufacturing',
+    stage: `
+<div class="s1">
+  <div class="s1-left st" style="--d:0">
+    <img src="img/s1-field.webp" alt="Cracked, dry farmland under a low sun">
+    <div class="s1-scrim"></div>
+    <div class="s1-copy">
+      <p class="s1-kick st" style="--d:1">The problem</p>
+      <ul class="s1-list">
+        <li class="st" style="--d:2"><b>Rising climate stress on crops</b></li>
+        <li class="st" style="--d:3"><b>Field deployment challenge for academic protectants</b></li>
+        <li class="st" style="--d:4"><b>High costs</b><span>Production, transport and storage</span></li>
+        <li class="st" style="--d:5"><b>Public concerns</b><span>GMO bacteria in the field</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="s1-right">
+    <p class="s-kick st" style="--d:4">Our ReLEAF system</p>
+    <h2 class="s-title st" style="--d:5">On-site <em>biomanufacturing</em></h2>
+    <ol class="s1-rail">
+      <li class="st" style="--d:7"><b>Local bioreactors</b><span>Cut transport cost, bridging the gap to farmers</span></li>
+      <li class="st" style="--d:8"><b>Optogenetic control</b><span>On-demand production to minimise storage</span></li>
+      <li class="st" style="--d:9"><b><i class="sp">Bacillus subtilis</i> and hollow-fibre filtration</b><span>Separates bacteria from protectants, bypasses processing and prevents bacterial release</span></li>
+      <li class="st" style="--d:10"><b>A new platform</b><span>Practical field deployment of engineered bioprotectants</span></li>
+    </ol>
+    <img class="s1-box st zoom" style="--d:11" src="img/s1-reactor.webp" alt="The ReLEAF bioreactor unit, front view">
+  </div>
+</div>`,
+    script: {
+      lead: 'Climate stress is rising, and the protectants that answer it do not leave the lab.',
+      body: [
+        'Three things keep them there. Production, transport and storage are expensive. Spraying engineered bacteria on a field is not acceptable to the public. And a protectant made centrally has to survive the journey to the farm.',
+        'ReLEAF moves manufacture to the farm. A local bioreactor removes the transport leg, optogenetic control makes protein on demand instead of in a warehouse, and a hollow-fibre membrane keeps <i class="sp">B. subtilis</i> inside while the protectant passes out. What leaves the box is cell-free.'
+      ],
+      numbers: [],
+      careful: 'The claim here is a platform for deployment, not a finished product. Say "enabling practical field deployment", which is what the four pieces together support.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 2 */
+  {
+    n: 2, time: '0:50', secs: 30,
+    kicker: 'Design',
+    title: 'Optogenetic circuit',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Optogenetic <em>circuit</em></h2></div>
+<div class="s-body s2">
+  <div>
+    <p class="cap st" style="--d:1">Four modules in <i class="sp">B. subtilis</i></p>
+    ${F('s2-modules', 'Four-module optogenetic circuit: PCB synthesis, light sensing, transcriptional output and protectant output', 490, '', 2)}
+  </div>
+  <div class="side">
+    <div>
+      <p class="cap-s st" style="--d:3">Production circuit</p>
+      ${F('s2-plasmid', 'Circular map of the optogenetic bioprotectant production circuit', 250, '', 4)}
+    </div>
+    <div>
+      <p class="cap-s st" style="--d:5">Output module, pSTK-1D</p>
+      ${F('s2-output', 'Replaceable output cassettes: BoPEP4 variants, LEA14 and acdS, each with a 6x His-tag', 300, '', 6)}
+    </div>
+  </div>
+</div>`,
+    script: {
+      lead: 'One chassis, four modules, and a cassette slot that decides which protectant comes out.',
+      body: [
+        'Module 1 makes phycocyanobilin, the chromophore. Module 2 is the CcaS/CcaR two-component sensor. Module 3 turns the phosphorylated regulator into transcription at P<sub>cpcG2</sub>. Module 4 is the output: a secretion tag, the protectant gene and a 6x His-tag for detection.',
+        'The output module is replaceable, so the same host and the same light input serve ACC deaminase, LEA14 and BoPEP4. That is the part other teams can reuse.'
+      ],
+      numbers: [
+        ['Host', '<i class="sp">B. subtilis</i> WB800'],
+        ['Sensor', 'CcaS / CcaR, green-on at P<sub>cpcG2</sub>'],
+        ['Secretion tags', 'SamyQ, Csn'],
+        ['Detection tag', '6x His']
+      ],
+      careful: 'If asked why both SamyQ and Csn: they are two secretion routes tested against each other, and the plate that compares them reads Csn-ACCD above the codon-optimised SamyQ arm.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 3 */
+  {
+    n: 3, time: '1:20', secs: 35,
+    kicker: 'Wet lab',
+    title: 'Light activation',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Light <em>activation</em></h2></div>
+<div class="s-body s3">
+  <div>
+    <p class="cap st" style="--d:1">Light plate apparatus</p>
+    ${F('s3-lpa', 'The light plate apparatus running green and red wells', 420, 'ph', 2)}
+    <p class="s-note st" style="--d:3;margin-top:18px">Green at 3,850 lux against red, 13 h and 16 h, read four ways on the same cultures.</p>
+  </div>
+  <div class="grid">
+    <div><p class="cap-s st" style="--d:3">Western blot</p>
+      ${F('s3-blot', 'Anti-His western blot, green and red light at 13 and 16 hours', 272, '', 4)}</div>
+    <div><p class="cap-s st" style="--d:4">Band intensity</p>
+      ${F('s3-blot-quant', 'Relative expression of ACCD from band intensity, G13 R13 G16 R16', 272, '', 5)}</div>
+    <div><p class="cap-s st" style="--d:5">ELISA</p>
+      ${F('s3-elisa', 'Anti-His ELISA concentrations, G13 R13 G16 R16', 272, '', 6)}</div>
+    <div><p class="cap-s st" style="--d:6">DNPH activity</p>
+      ${F('s3-dnph', 'DNPH assay, ACCD activity under green and red light at 13 and 16 hours', 272, '', 7)}</div>
+  </div>
+</div>`,
+    script: {
+      lead: 'The device is built and expressing. The light switch itself is not yet demonstrated.',
+      body: [
+        'Same cultures, four readouts. The blot puts ACC deaminase at the expected size under both wavelengths and the band intensities are comparable. The ELISA agrees: 12.9 against 12.5 µg/mL at 13 h, with the spreads overlapping.',
+        'So we report expression as established and light dependence as open. The honest statement is that the protein is there under both colours, and the difference we can measure is smaller than the assay spread.'
+      ],
+      numbers: [
+        ['ELISA, 13 h', 'green 12.9 vs red 12.5 µg/mL'],
+        ['ELISA, 16 h', 'green 12.5 vs red 12.1 µg/mL'],
+        ['Green high tier', '3,850 lux'],
+        ['Replicates', 'n = 2 per arm']
+      ],
+      careful: 'Do not say the switch works. With n = 2 and overlapping ranges there is no statistic, and the DNPH panel at 16 h runs the other way. Colour is unresolved; time is the factor that moves.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 4 */
+  {
+    n: 4, time: '1:55', secs: 35,
+    kicker: 'Hardware',
+    title: 'Bioreactor',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Hardware <em>bioreactor</em></h2></div>
+<div class="s-body s4">
+  <div>
+    <p class="cap st" style="--d:1">Full system</p>
+    ${F('s4-schematic', 'Flow schematic: culture chamber, pump, flow meter, inline photometer, hollow-fibre membrane, pressure transducers and output bottle', 560, '', 2)}
+  </div>
+  <div>
+    <p class="cap st" style="--d:3">Calibrated photometer</p>
+    ${F('s4-calib', 'A600 against monodisperse silica concentration for the BioDrop, Pro inline and Slim inline photometers', 330, '', 4)}
+    <p class="cap st" style="--d:5;margin-top:24px">Built units</p>
+    <div class="hw">
+      ${F('s4-rig', 'The assembled bioreactor rig on its frame', 215, '', 6)}
+      ${F('s4-photo-pro', 'Pro inline photometer, 163 mm tall', 215, '', 7)}
+      ${F('s4-photo-slim', 'Slim inline photometer, 99 mm long', 215, '', 8)}
+    </div>
+  </div>
+</div>`,
+    script: {
+      lead: 'A 0.5 litre culture loop with the membrane in line, and our own optical density sensor on the same loop.',
+      body: [
+        'Culture is pumped from the chamber past a flow meter and an inline photometer into a hollow-fibre module: 0.2 µm pores, 11 fibres, 200 cm² of area. Cells stay on the lumen side and return to the chamber; the permeate leaves as the product stream. pH is held by automatic 1 M KOH addition.',
+        'We built two inline photometers and calibrated both against a commercial BioDrop on monodisperse silica. Both are linear across the working range, and the Slim unit reads about a fifth of the slope, so it stays in range where the others saturate.'
+      ],
+      numbers: [
+        ['Culture volume', '0.5 L'],
+        ['Membrane', '0.2 µm, 11 fibres, 200 cm²'],
+        ['Flow rate', '280 to 300 mL/min'],
+        ['Stirring', '200 to 600 rpm'],
+        ['Pro photometer', 'slope 2.3675, R² 0.9965'],
+        ['Slim photometer', 'slope 0.4248, R² 0.9992']
+      ],
+      careful: 'The photometers are calibrated against silica, not against cells. If a judge asks for OD600 accuracy on culture, that cross-check is not done yet.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 5 */
+  {
+    n: 5, time: '2:30', secs: 45,
+    kicker: 'Results',
+    title: 'Bioreactor results',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Bioreactor <em>results</em></h2></div>
+<div class="s-body s5">
+  <div>
+    <p class="cap st" style="--d:1">Confirmed bacteria containment</p>
+    ${F('s5-containment', 'Lumen side plate covered in colonies, shell side plate clear', 275, '', 2)}
+    <p class="cap st" style="--d:3;margin-top:24px">Confirmed protectant secretion</p>
+    ${F('s5-secretion', 'ELISA concentrations on the lumen and shell sides at 1, 16, 24 and 40 hours', 275, '', 4)}
+  </div>
+  <div>
+    <p class="cap st" style="--d:3">Continuous production</p>
+    <div class="charts">
+      ${F('s5-elisa', 'ELISA concentration against time, 1 to 72 hours', 194, '', 4)}
+      ${F('s5-dnph', 'DNPH volumetric activity against time, 1 to 72 hours', 194, '', 5)}
+      ${F('s5-spec', 'Specific activity against time, 1 to 72 hours', 194, '', 6)}
+    </div>
+  </div>
+  <div>
+    <p class="cap st" style="--d:5">Running system</p>
+    ${F('s5-incubator', 'The reactor running inside the incubator with pumps, bottles and tubing', 600, 'ph', 6)}
+  </div>
+</div>`,
+    script: {
+      lead: 'Three things are confirmed: the bacteria stay in, the protein gets out, and the run keeps producing.',
+      body: [
+        'Containment is a plate test on both sides of the membrane. The lumen side grows a lawn, the shell side is clear.',
+        'Secretion is the ELISA on both sides of the same run: 7.7 and 5.7 µg/mL at 1 h, tracking together to 40 h, so the protein is crossing while the cells are not.',
+        'Production holds across the first 30 hours with no trend, between 2.5 and 8.5 µg/mL across both runs. After 30 hours the titre halves. Activity peaks at 18 h, about six hours after the protein maximum.'
+      ],
+      numbers: [
+        ['Reactor ELISA', '2.5 to 8.5 µg/mL'],
+        ['Plasmid-free control', '1.3 µg/mL'],
+        ['Lumen vs shell, 1 h', '7.7 vs 5.7 µg/mL'],
+        ['Peak activity', '18 h, 30.9 nmol α-KB mL⁻¹ h⁻¹'],
+        ['After 30 h', 'titre halves, p = 0.006'],
+        ['Replication', 'n = 1 per time point']
+      ],
+      careful: 'Quote the control beside the number and never subtract it: 1.3 µg/mL is a light-plate control, and no plasmid-free reactor run exists. Every time point is a single sample.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 6 */
+  {
+    n: 6, time: '3:15', secs: 40,
+    kicker: 'Plants',
+    title: 'Assays on agar',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Plant <em>assays, agar</em></h2></div>
+<div class="s-body s6">
+  <div>
+    <div class="hd st" style="--d:1"><h3>ACCD, 37 °C heat</h3>
+      <p>Pre-treatment, 18-day-old <i class="sp">Arabidopsis thaliana</i></p></div>
+    <div class="pair">
+      <div>${F('s6-heat-without', 'Seedling roots without ACCD under heat stress', 270, 'ph', 2)}<p class="lbl">Without ACCD</p></div>
+      <div>${F('s6-heat-with', 'Seedling roots with ACCD under heat stress', 270, 'ph', 3)}<p class="lbl">With ACCD</p></div>
+    </div>
+    <div class="charts c2">
+      ${F('s6-heat-chl', 'Relative chlorophyll content under 37 °C heat, with and without ACCD', 210, '', 4)}
+      ${F('s6-heat-root', 'Primary root length box plot under 37 °C heat', 210, '', 5)}
+    </div>
+    <p class="pv st" style="--d:7">Mean root length 40.9 against 46.9 mm</p>
+  </div>
+
+  <div>
+    <div class="hd st" style="--d:2"><h3>LEA14, 100 mM NaCl</h3>
+      <p>Post-treatment, 10-day-old <i class="sp">Arabidopsis thaliana</i></p></div>
+    <div class="pair">
+      <div>${F('s6-lea-without', 'Plate of seedlings in 100 mM NaCl without LEA14', 223, 'ph', 3)}<p class="lbl">Without LEA14</p></div>
+      <div>${F('s6-lea-with', 'Plate of seedlings in 100 mM NaCl with LEA14', 223, 'ph', 4)}<p class="lbl">With LEA14</p></div>
+    </div>
+    <div class="charts c2">
+      ${F('s6-lea-chl', 'Relative chlorophyll content, 100 mM NaCl, with and without LEA14', 210, '', 5)}
+      ${F('s6-lea-fw', 'Fresh weight, 100 mM NaCl, with and without LEA14', 210, '', 6)}
+    </div>
+  </div>
+
+  <div>
+    <div class="hd st" style="--d:3"><h3>BoPEP4, 100 mM NaCl</h3>
+      <p>Post-treatment, 10-day-old <i class="sp">Arabidopsis thaliana</i></p></div>
+    <div class="pair">
+      <div>${F('s6-bopep-without', 'Plate of seedlings in 100 mM NaCl without BoPEP4', 223, 'ph', 4)}<p class="lbl">Without BoPEP4</p></div>
+      <div>${F('s6-bopep-with', 'Plate of seedlings in 100 mM NaCl with BoPEP4', 223, 'ph', 5)}<p class="lbl">With BoPEP4</p></div>
+    </div>
+    <div class="charts c2">
+      ${F('s6-bopep-chl', 'Relative chlorophyll content, 100 mM NaCl, with and without BoPEP4', 210, '', 6)}
+      ${F('s6-bopep-fw', 'Fresh weight, 100 mM NaCl, with and without BoPEP4', 210, '', 7)}
+    </div>
+    <p class="pv st" style="--d:8">Chlorophyll, p = 0.0002</p>
+  </div>
+</div>`,
+    script: {
+      lead: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.',
+      body: [
+        'Under 37 °C, seedlings given ACC deaminase before the stress keep more chlorophyll and grow longer primary roots, 46.9 against 40.9 mm.',
+        'Under 100 mM NaCl, LEA14 applied after the stress raises chlorophyll with fresh weight unchanged. BoPEP4 is the strongest arm on this plate: chlorophyll up 1.85-fold at p = 0.0002, and fresh weight almost doubled.'
+      ],
+      numbers: [
+        ['Heat, root length', '40.9 vs 46.9 mm'],
+        ['Heat, chlorophyll', '1.00 vs 1.41, p < 0.05'],
+        ['LEA14, chlorophyll', '1.00 vs 1.36'],
+        ['BoPEP4, chlorophyll', '1.00 vs 1.85, p = 0.0002'],
+        ['BoPEP4, fresh weight', '0.17 vs 0.33 g']
+      ],
+      careful: 'Chlorophyll is relative to the untreated control on the same plate, not normalised to fresh weight. Normalising to weight inverts results in salt groups, so the two are reported separately.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 7 */
+  {
+    n: 7, time: '3:55', secs: 35,
+    kicker: 'Plants',
+    title: 'Assays in soil',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Plant <em>assays, soil</em></h2></div>
+<div class="s-body s7">
+  <div>
+    <div class="hd st" style="--d:1"><h3>300 mM NaCl</h3><p>ACCD, potted <i class="sp">Arabidopsis thaliana</i></p></div>
+    <div class="pots">
+      <div></div>
+      <p class="colh st" style="--d:2">Without ACCD</p>
+      <p class="colh st" style="--d:2">With ACCD</p>
+      <p class="d st" style="--d:3">Day 1</p>
+      ${F('s7-d1-without', 'Pot without ACCD on day 1', 160, 'ph', 3)}
+      ${F('s7-d1-with', 'Pot with ACCD on day 1', 160, 'ph', 4)}
+      <p class="d st" style="--d:5">Day 5</p>
+      ${F('s7-d5-without', 'Pot without ACCD on day 5', 160, 'ph', 5)}
+      ${F('s7-d5-with', 'Pot with ACCD on day 5', 160, 'ph', 6)}
+    </div>
+    <div class="salt">
+      ${F('s7-salt-chart', 'Relative chlorophyll content at 300 mM NaCl, with and without ACCD', 200, '', 7)}
+    </div>
+  </div>
+
+  <div>
+    <div class="hd st" style="--d:2"><h3>5 days at 37 °C</h3><p>Co-treatment and post-treatment against an unstressed reference</p></div>
+    <div class="top">
+      <div>${F('s7-22c', 'Reference pot held at 22 °C without ACCD', 200, 'ph', 3)}<p class="lbl">22 °C, without ACCD</p></div>
+      ${F('s7-heat-chart', 'Relative chlorophyll content at 22 °C and under 37 °C heat stress for the three treatments', 222, '', 4)}
+    </div>
+    <p class="band st" style="--d:5">5 days of 37 °C heat stress</p>
+    <div class="trio">
+      <div>${F('s7-heat-without', 'Heat-stressed pot without ACCD', 248, 'ph', 6)}<p class="lbl">Without ACCD</p></div>
+      <div>${F('s7-heat-co', 'Heat-stressed pot with co-treatment ACCD', 248, 'ph', 7)}<p class="lbl">Co-treatment</p></div>
+      <div>${F('s7-heat-post', 'Heat-stressed pot with post-treatment ACCD', 248, 'ph', 8)}<p class="lbl">Post-treatment</p></div>
+    </div>
+  </div>
+</div>`,
+    script: {
+      lead: 'Soil is the harder test, and it separates the two ways of applying the enzyme.',
+      body: [
+        'At 300 mM NaCl, pots given ACC deaminase hold more chlorophyll by day 5, and the difference is significant.',
+        'Under five days at 37 °C the ordering matters. Co-treatment, applied with the stress, recovers chlorophyll to the unstressed level. Post-treatment does not: it sits below the untreated stressed control. The photographs agree, with the post-treatment pot showing the most leaf damage.'
+      ],
+      numbers: [
+        ['300 mM NaCl', '1.00 vs 1.17, p < 0.0001'],
+        ['22 °C reference', '1.00'],
+        ['Heat, untreated', '0.84'],
+        ['Heat, co-treatment', '1.00, p < 0.0001'],
+        ['Heat, post-treatment', '0.49']
+      ],
+      careful: 'The post-treatment result goes against us and should be stated, not skipped. On agar the pre-treatment arm helped under heat, so what these runs separate is timing, not the enzyme.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 8 */
+  {
+    n: 8, time: '4:30', secs: 15,
+    kicker: 'Since the freeze',
+    title: 'After wiki freeze',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">After <em>wiki freeze</em></h2></div>
+<div class="s-body">
+  <ol class="s8-list">
+    <li class="st" style="--d:1">Green light integration into the bioreactor</li>
+    <li class="st" style="--d:2">More light plate results<span>Level 2, aiming to resolve green against red</span></li>
+    <li class="st" style="--d:3">More plant results</li>
+    <li class="st" style="--d:4">Droplet</li>
+    <li class="st" style="--d:5">New red light plate with 670 nm bulbs</li>
+  </ol>
+</div>`,
+    script: {
+      lead: 'Five things have moved since the wiki froze.',
+      body: [
+        'The first two go straight at the open question from slide 3. Green light goes into the reactor itself, and a new light plate with 670 nm red bulbs gives the red arm a clean wavelength so the comparison can finally resolve.'
+      ],
+      numbers: [],
+      careful: 'This slide is the answer to "you did not show the switch". Lead with it instead of waiting to be asked.'
+    }
+  },
+
+  /* ---------------------------------------------------------- 9 */
+  {
+    n: 9, time: '4:45', secs: 15,
+    kicker: 'Next',
+    title: 'Future work',
+    stage: `
+<div class="s-head"><h2 class="s-title st" style="--d:0">Future <em>work</em></h2></div>
+<div class="s-body s9">
+  <ol class="s9-list">
+    <li class="st" style="--d:1">Quick-slot bacteria and medium</li>
+    <li class="st" style="--d:2">Water supply and irrigation line</li>
+    <li class="st" style="--d:3">Quality assurance and quality control</li>
+    <li class="st" style="--d:4">Chromosomal integration</li>
+    <li class="st" style="--d:5">Regulatory approval</li>
+    <li class="st" style="--d:6">Pilot field testing</li>
+  </ol>
+  <div class="renders">
+    <img class="r-unit st zoom" style="--d:3" src="img/s9-unit.webp" alt="Field unit with water inlet and outlet lines">
+    <img class="r-core st zoom" style="--d:5" src="img/s9-reactor.webp" alt="Bioreactor core with a quick-slot culture cartridge seated on top">
+  </div>
+</div>`,
+    script: {
+      lead: 'The route from this prototype to something a farmer can own.',
+      body: [
+        'A quick-slot cartridge for bacteria and medium removes aseptic handling from the farm. The unit joins the irrigation line so dosing is part of watering. Chromosomal integration retires the plasmid and its antibiotic marker, which is what a regulator will ask for before a pilot field test.'
+      ],
+      numbers: [],
+      careful: 'Order matters: containment and QC come before field testing. Say the regulatory step out loud, since judges read a GMO in a field as the risk.'
+    }
+  }
+];
+
+if (typeof module !== 'undefined') module.exports = SLIDES;

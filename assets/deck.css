@@ -1,0 +1,149 @@
+:root{
+  --ink:#1d1d1b;
+  --ink-2:#55564f;
+  --ink-3:#8a8b84;
+  --green:#1c4721;
+  --olive:#858a3e;
+  --olive-d:#324519;
+  --line:rgba(29,29,27,.10);
+  --line-2:rgba(29,29,27,.06);
+  --bg:#ffffff;
+  --bg-2:#f6f6f3;
+  --ease:cubic-bezier(.22,.72,.2,1);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img{display:block;max-width:100%}
+a{color:inherit}
+
+/* ============================================================
+   STAGE — every slide is authored on a 1600x900 canvas
+   ============================================================ */
+.stageWrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden}
+.stage{position:absolute;left:0;top:0;width:1600px;height:900px;background:#fff;
+  transform-origin:0 0;font-size:16px}
+.stage *{font-kerning:normal}
+
+/* entrance steps */
+.st{opacity:0;transform:translateY(14px);
+  transition:opacity .62s var(--ease),transform .62s var(--ease);
+  transition-delay:calc(var(--d,0) * 85ms)}
+.st.zoom{transform:translateY(10px) scale(.985)}
+.go .st{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  .st{transition-duration:.01ms !important;transition-delay:0ms !important}
+}
+
+/* shared slide furniture */
+.s-kick{font-size:20px;font-weight:650;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--olive);margin:0 0 10px}
+.s-title{font-size:64px;font-weight:800;letter-spacing:-.025em;line-height:1;
+  margin:0;color:var(--ink)}
+.s-title em{font-style:normal;color:var(--olive)}
+.s-head{position:absolute;left:76px;top:56px;right:76px}
+.s-body{position:absolute;left:76px;right:76px;top:190px;bottom:58px;min-height:0}
+.s-note{font-size:19px;line-height:1.35;color:var(--ink-2);margin:0}
+.cap{font-size:19px;font-weight:650;color:var(--ink);margin:0 0 8px;letter-spacing:-.01em}
+.cap-s{font-size:17px;font-weight:600;color:var(--ink-2);margin:0 0 6px}
+.stage .fig,.stage .cell,.stage .blk,.stage .col,.stage .mod,.stage .side,.stage .grid,.stage .charts{min-height:0}
+.fig{margin:0;border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+.fig{position:relative}
+.fig img{position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);object-fit:contain}
+.ph img{inset:0;width:100%;height:100%;object-fit:cover}
+.lbl{font-size:16px;font-weight:600;color:var(--ink-2);text-align:center;margin:6px 0 0;height:22px;line-height:22px}
+.rule{height:1px;background:var(--line);border:0;margin:0}
+i.sp{font-style:italic}
+
+/* ---------- Slide 1 ---------- */
+.s1{position:absolute;inset:0;display:grid;grid-template-columns:600px minmax(0,1fr)}
+.s1-left{position:relative;overflow:hidden;background:#241a12}
+.s1-left>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(1.06);transition:transform 9s linear}
+.go .s1-left>img{transform:scale(1)}
+.s1-scrim{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(20,14,9,.86) 0%,rgba(20,14,9,.52) 42%,rgba(20,14,9,.88) 100%)}
+.s1-copy{position:absolute;inset:0;padding:60px 56px;display:flex;flex-direction:column;color:#fff}
+.s1-kick{font-size:21px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:#fff;opacity:.72}
+.s1-list{list-style:none;margin:auto 0 8px;padding:0;display:grid;gap:34px}
+.s1-list b{display:block;font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.14}
+.s1-list span{display:block;font-size:20px;line-height:1.3;color:rgba(255,255,255,.76);margin-top:5px}
+.s1-right{position:relative;padding:60px 64px 48px}
+.s1-rail{list-style:none;margin:42px 0 0;padding:0 0 0 44px;position:relative;display:grid;gap:30px}
+.s1-rail:before{content:"";position:absolute;left:11px;top:9px;bottom:14px;width:2px;
+  background:repeating-linear-gradient(180deg,var(--green) 0 4px,transparent 4px 10px)}
+.s1-rail li{position:relative}
+.s1-rail li:before{content:"";position:absolute;left:-44px;top:3px;width:24px;height:24px;
+  border-radius:50%;background:var(--green)}
+.s1-rail b{display:block;font-size:25px;font-weight:700;letter-spacing:-.01em}
+.s1-rail span{display:block;font-size:20px;color:var(--ink-2);line-height:1.34;margin-top:3px}
+.s1-box{position:absolute;right:54px;bottom:44px;width:268px}
+
+/* ---------- Slide 2 ---------- */
+.s2{display:grid;grid-template-columns:930px 470px;gap:48px}
+.s2 .side{display:flex;flex-direction:column;gap:22px}
+
+/* ---------- Slide 3 ---------- */
+.s3{display:grid;grid-template-columns:330px 1070px;gap:48px}
+.s3 .grid{display:grid;grid-template-columns:518px 518px;gap:24px 34px}
+
+/* ---------- Slide 4 ---------- */
+.s4{display:grid;grid-template-columns:860px 540px;gap:48px}
+.s4 .hw{display:grid;grid-template-columns:190px 165px 165px;gap:10px}
+.s4 .hw .fig{background:var(--bg-2)}
+
+/* ---------- Slide 5 ---------- */
+.s5{display:grid;grid-template-columns:520px 420px 440px;gap:34px}
+.s5 .charts{display:grid;gap:12px}
+
+/* ---------- Slide 6 ---------- */
+.s6{display:grid;grid-template-columns:460px 460px 460px;gap:34px}
+.s6 .hd{border-top:3px solid var(--ink);padding-top:10px;margin-bottom:14px;height:78px}
+.s6 .hd h3{margin:0;font-size:23px;font-weight:750;letter-spacing:-.015em}
+.s6 .hd p{margin:4px 0 0;font-size:15px;line-height:1.3;color:var(--ink-2)}
+.s6 .pair{display:grid;grid-template-columns:223px 223px;gap:14px}
+.s6 .charts{display:grid;gap:12px;margin-top:16px}
+.s6 .c2{grid-template-columns:223px 223px}
+.s6 .c3{grid-template-columns:144px 144px 144px}
+.s6 .pv{font-size:16px;font-weight:650;color:var(--green);margin:14px 0 0}
+
+/* ---------- Slide 7 ---------- */
+.s7{display:grid;grid-template-columns:620px 790px;gap:38px}
+.s7 .hd{border-top:3px solid var(--ink);padding-top:10px;margin-bottom:14px;height:64px}
+.s7 .hd h3{margin:0;font-size:23px;font-weight:750;letter-spacing:-.015em}
+.s7 .hd p{margin:4px 0 0;font-size:15px;color:var(--ink-2)}
+.s7 .pots{display:grid;grid-template-columns:70px 265px 265px;gap:8px;align-items:center}
+.s7 .pots .d{font-size:18px;font-weight:650;color:var(--ink-2)}
+.s7 .colh{font-size:17px;font-weight:650;text-align:center;color:var(--ink);margin:0}
+.s7 .salt{margin-top:16px}
+.s7 .salt .fig{width:330px}
+.s7 .top{display:grid;grid-template-columns:210px 540px;gap:20px}
+.s7 .band{font-size:17px;font-weight:650;color:var(--ink);text-align:center;
+  border-top:2px solid var(--ink);padding-top:8px;margin:18px 0 0}
+.s7 .trio{display:grid;grid-template-columns:254px 254px 254px;gap:14px;margin-top:14px}
+
+/* ---------- Slide 8 ---------- */
+.s8-list{list-style:none;margin:0;padding:0;counter-reset:n;display:grid;gap:26px;max-width:1180px}
+.s8-list li{counter-increment:n;position:relative;padding-left:76px;font-size:33px;
+  font-weight:600;letter-spacing:-.015em;line-height:1.24}
+.s8-list li:before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:7px;
+  font-size:20px;font-weight:700;color:var(--olive);letter-spacing:.06em}
+.s8-list span{display:block;font-size:20px;font-weight:450;color:var(--ink-2);margin-top:6px;
+  letter-spacing:0}
+
+/* ---------- Slide 9 ---------- */
+.s9{display:grid;grid-template-columns:880px 520px;gap:48px}
+.s9-list{list-style:none;margin:0;padding:0;counter-reset:n;display:grid;gap:22px;align-content:center}
+.s9-list li{counter-increment:n;position:relative;padding-left:66px;font-size:33px;
+  font-weight:650;letter-spacing:-.015em;line-height:1.2}
+.s9-list li:before{content:counter(n);position:absolute;left:0;top:1px;width:42px;height:42px;
+  border-radius:50%;background:var(--bg-2);color:var(--green);font-size:19px;font-weight:700;
+  display:grid;place-items:center}
+.s9-list span{display:block;font-size:19px;font-weight:450;color:var(--ink-2);margin-top:4px}
+.s9 .renders{position:relative}
+.s9 .r-unit{position:absolute;right:12px;top:0;width:188px}
+.s9 .r-core{position:absolute;right:36px;bottom:0;width:368px}
