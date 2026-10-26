@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReLEAF · Presentation</title>
 <meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, nine slides.">
-<link rel="stylesheet" href="assets/deck.css?v=1">
+<link rel="stylesheet" href="assets/deck.css?v=2">
 <style>
 html,body{height:100%;overflow:hidden;background:#f2f2ef}
 .deck{position:fixed;inset:0;display:grid;place-items:center}
@@ -47,6 +47,7 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
   background:rgba(255,255,255,.8);border:1px solid var(--line-2);
   opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
 .back.show{opacity:1;pointer-events:auto}
+.back2{left:auto;right:22px}
 </style>
 </head>
 <body>
@@ -54,6 +55,7 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
 <div class="deck"><div class="frame" id="frame"></div></div>
 
 <a class="back" id="back" href="index.html">Slides and script</a>
+<a class="back back2" id="back2" href="cinema.html">Focus view</a>
 <div class="dots" id="dots"></div>
 <div class="hud" id="hud">
   <span class="ct" id="ct">01 / 09</span>
@@ -64,7 +66,7 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
 </div>
 <div class="bar"><i id="barI"></i></div>
 
-<script src="assets/deck.js?v=1"></script>
+<script src="assets/deck.js?v=2"></script>
 <script>
 const frame = document.getElementById('frame');
 frame.innerHTML = SLIDES.map((s,i) =>
@@ -148,7 +150,8 @@ function toggleTimer(){
 addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') startClock(); });
 
 /* chrome fades out while idle */
-const chrome = [document.getElementById('hud'), dots, document.getElementById('back')];
+const chrome = [document.getElementById('hud'), dots, document.getElementById('back'),
+                document.getElementById('back2')];
 let idle;
 function wake(){
   chrome.forEach(c => c.classList.add('show'));
