@@ -5,7 +5,10 @@
 
      sel   selector, or array of selectors, inside the slide. null = whole slide
      z     how hard to push in (1 = no push). The engine caps it to the frame
-     hold  milliseconds to dwell once the camera has arrived
+     hold  how long to dwell once the camera has arrived. At script pace this is a
+           weight, not a duration: each slide is given the seconds deck.js budgets
+           the speaker, and its beats split them in the ratio of their holds. The
+           deep and brisk paces use the number itself, at 1.5x and 0.78x
      tag   'win'   confirmed — we have the result in hand
            'build' what we made or how it works
            'open'  stated honestly: not shown, or against us

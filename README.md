@@ -8,8 +8,9 @@ The GEMS Taiwan 2026 five-minute judging deck, rebuilt as a web page.
 - **[Presentation view](https://timmy97-tw.github.io/releaf-5min/show.html)** — full-screen,
   one slide at a time, with a running clock.
 - **[Focus view](https://timmy97-tw.github.io/releaf-5min/cinema.html)** — the same nine slides as
-  33 camera moves. It pushes into one figure at a time, whites out everything around it, holds long
-  enough to read it, and keeps a running tally of the 13 results we can prove.
+  33 camera moves, cut to the speaking script. It pushes into one figure at a time, whites out
+  everything around it, holds for as long as that slide gets in the script, and keeps a running
+  tally of the 13 results we can prove.
 
 ## Focus view
 
@@ -24,13 +25,22 @@ results, and the closing card lists all thirteen.
 | → ← | Step a beat |
 | ↓ ↑ | Jump to the next or previous slide |
 | 1–9 | Go to a slide |
-| p | Deep pace (5:06) or brisk (2:58) |
+| p | Script pace (5:00), deep (5:06) or brisk (2:58) |
 | f | Full screen |
 | r | Start over |
 
+It opens at **script pace**: every slide holds its beats for exactly the seconds `deck.js` budgets
+the speaker on that slide — 50 s across four beats on slide 1, 45 s across six on the reactor
+results, 15 s across three on the last two — so the camera arrives where the words are and the whole
+run lands on 5:00. The HUD shows the slide's place in the script (`2:30 in, 45s on this slide`) and
+the clock turns red past five minutes. Deep pace ignores the budget and dwells longer than anyone
+speaks; brisk is for a fast read-through.
+
 `cinema.html#go` skips the opening card and starts straight away. Beats live in `assets/beats.js`:
-each one is a selector on the 1600×900 stage, a dwell time, and the line the judge reads while you
-speak, so retiming or re-aiming the camera means editing one array.
+each one is a selector on the 1600×900 stage, a dwell weight, and the line the judge reads while you
+speak, so retiming or re-aiming the camera means editing one array. At script pace `hold` is a
+weight rather than a duration: the slide's seconds are split between its beats in that ratio, so
+making one beat twice as long borrows the time from its neighbours instead of overrunning the slide.
 
 ## Presenting
 

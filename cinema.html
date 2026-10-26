@@ -65,7 +65,8 @@ body{display:block}
   box-shadow:0 12px 34px -16px rgba(0,0,0,.34);
   opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
 .hud.show{opacity:1;pointer-events:auto}
-.hud .ct{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.hud .ct{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums;
+  letter-spacing:.02em;white-space:nowrap}
 .hud .tm{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
   padding-left:13px;border-left:1px solid var(--line)}
 .hud button{height:30px;min-width:30px;padding:0 10px;border-radius:980px;border:0;background:var(--bg-2);
@@ -152,7 +153,7 @@ body{display:block}
   <button id="prev" title="Previous beat (←)">&#8249;</button>
   <button id="play" class="go" title="Pause or resume (space)">&#10073;&#10073;</button>
   <button id="next" title="Next beat (→)">&#8250;</button>
-  <button id="pace" title="Dwell time on each beat (p)">Deep</button>
+  <button id="pace" title="Dwell time on each beat (p)">Script</button>
   <button id="full" title="Full screen (f)">&#9633;</button>
 </div>
 
@@ -225,15 +226,31 @@ BEATS.forEach(group => {
 });
 const TOTAL_WIN = FLAT.filter(b => b.tag === 'win').length;
 
-/* how long each beat is allowed to sit. Deep is the default: the whole point of
-   this view is that nobody has to read a slide at speaking speed. */
-const PACE = [{name:'Deep', k:1.5}, {name:'Brisk', k:0.78}];
+/* Script pace: every slide gets exactly the seconds deck.js gives the speaker,
+   split between its beats in the ratio of their authored holds, with the camera
+   travel taken out first. A beat never drops below MIN_HOLD, so a slide on a
+   very tight budget overruns rather than flashing past. */
+const MIN_HOLD = 2600;
+SLIDES.forEach((s, si) => {
+  const peers = FLAT.filter(b => b.si === si);
+  const budget = s.secs*1000 - peers.length*MOVE;
+  const weight = peers.reduce((t,b) => t + b.hold, 0);
+  peers.forEach(b => b.script = Math.max(MIN_HOLD, Math.round(budget * b.hold/weight)));
+});
+
+/* How long each beat is allowed to sit.
+   Script  every slide takes the time deck.js budgets the speaker — present with this
+   Deep    longer than anyone speaks, for reading the deck on your own
+   Brisk   a fast run-through */
+const PACE = [
+  {name:'Script', of: b => b.script},
+  {name:'Deep',   of: b => Math.round(b.hold * 1.5)},
+  {name:'Brisk',  of: b => Math.round(b.hold * 0.78)}
+];
 let paceI = 0;
-const dwell = b => Math.round(b.hold * PACE[paceI].k);
-const runtime = i => {
-  const ms = FLAT.reduce((t,b) => t + Math.round(b.hold*PACE[i].k) + MOVE, 0);
-  return Math.floor(ms/60000)+':'+String(Math.round(ms%60000/1000)).padStart(2,'0');
-};
+const dwell = b => PACE[paceI].of(b);
+const clk = ms => Math.floor(ms/60000)+':'+String(Math.round(ms%60000/1000)).padStart(2,'0');
+const runtime = i => clk(FLAT.reduce((t,b) => t + PACE[i].of(b) + MOVE, 0));
 
 let base = 1, Fw = 0, Fh = 0;
 function fit(){
@@ -365,9 +382,9 @@ function freezeStage(){
 }
 
 function hud(){
-  const b = FLAT[k];
+  const b = FLAT[k], s = SLIDES[b.si];
   document.getElementById('ct').textContent =
-    `${b.si+1} / ${SLIDES.length} · beat ${b.bi+1} of ${b.nb}`;
+    `${b.si+1} / ${SLIDES.length} · beat ${b.bi+1} of ${b.nb} · ${s.time} in, ${s.secs}s on this slide`;
   railI.style.width = ((k+1)/FLAT.length*100)+'%';
 }
 
@@ -436,6 +453,7 @@ function clock(on){
     tickT = setInterval(()=>{
       const s = Math.floor((Date.now()-t0)/1000);
       tm.textContent = Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+      tm.style.color = s > 300 ? '#a33' : '';
     }, 250);
   } else if (!on && tickT){ clearInterval(tickT); tickT = null; }
 }
@@ -480,7 +498,7 @@ const paceBtn = document.getElementById('pace');
 paceBtn.onclick = () => {
   paceI = (paceI + 1) % PACE.length;
   paceBtn.textContent = PACE[paceI].name;
-  paceBtn.title = `Dwell time on each beat — whole run ${runtime(paceI)} (p)`;
+  paceBtn.title = `Dwell on each beat — ${PACE[paceI].name.toLowerCase()} pace, whole run ${runtime(paceI)} (p)`;
   if (started && phase === 'hold' && !paused){
     clearTimeout(timer);
     phaseLeft = dwell(FLAT[k]);
@@ -548,9 +566,11 @@ const OPENS = FLAT.filter(b => b.tag === 'open').length;
 document.getElementById('openSub').insertAdjacentHTML('beforeend',
   ` <b>${TOTAL_WIN} of the stops are results we have in hand.</b> ${OPENS} are limits we state out loud,
     because what we can prove counts for more when we are straight about what we cannot.
-    ${FLAT.length} stops, ${runtime(0)} at the deep pace and ${runtime(1)} brisk &mdash; press
-    <kbd>p</kbd> to switch, <kbd>space</kbd> to hold a beat as long as you like.`);
-paceBtn.title = `Dwell time on each beat — whole run ${runtime(0)} (p)`;
+    ${FLAT.length} stops. It opens on <b>script pace</b>, ${runtime(0)}: each slide holds its beats for
+    exactly the seconds the speaking script gives it, so the camera arrives where the words are.
+    <kbd>p</kbd> switches to deep (${runtime(1)}, longer than anyone speaks) or brisk (${runtime(2)});
+    <kbd>space</kbd> holds a beat as long as a judge keeps asking.`);
+paceBtn.title = `Dwell on each beat — script pace, whole run ${runtime(0)} (p)`;
 
 addEventListener('resize', fit);
 fit(); wake();
