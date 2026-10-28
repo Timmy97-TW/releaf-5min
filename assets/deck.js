@@ -18,10 +18,11 @@
         slide gets a highlight, not a zoom.
      4. Nobody has time to drive this during a talk, so steps stay few.
 
-   Which gives four animations in the whole deck: three camera pushes (slides 2,
-   3 and 4) and one highlight (slide 6). Every other slide lands whole and never
-   moves. Nothing anywhere is held back — slide 1 held its answer until 28 Oct,
-   and Timmy had it land whole too.
+   Which gives three animations in the whole deck: a camera push on slide 2 and
+   on slide 3, and the highlight on slide 6. Every other slide lands whole and
+   never moves. Nothing anywhere is held back. Slide 4 had a push onto its flow
+   schematic; the fix for a figure too small to read is to crop its margins, not
+   to send the camera at it.
 
      base    the --d revealed on landing. Omitted means all of it, which is the
              normal case; a value here is holding content back, so justify it.
@@ -203,7 +204,7 @@ const SLIDES = [
 <div class="s-body s4">
   <div>
     <p class="cap st" style="--d:1">Full system</p>
-    ${F('s4-schematic', 'Flow schematic: culture chamber, pump, flow meter, inline photometer, hollow-fibre membrane, pressure transducers and output bottle', 560, '', 2, 'schematic')}
+    ${F('s4-system', 'Flow schematic: culture chamber, pump, flow meter, inline photometer, hollow-fibre membrane, pressure transducers and output bottle', 560, '', 2)}
   </div>
   <div>
     <p class="cap st" style="--d:3">Calibrated photometer</p>
@@ -217,10 +218,8 @@ const SLIDES = [
   </div>
 </div>`,
     run: {
-      say: 'To contain the engineered bacteria we built specialised bioreactor hardware, with two self-built inline photometers calibrated against a commercial BioDrop.',
-      cues: [
-        {focus: 'schematic', say: 'Culture is pumped past a flow meter and an inline photometer into a hollow-fibre module: 0.2 µm pores, 11 fibres, 200 cm². Cells stay on the lumen side and the protectant leaves in the product stream.'}
-      ]
+      say: 'To contain the engineered bacteria we built specialised bioreactor hardware. Culture is pumped into a hollow-fibre module — 0.2 µm pores, 11 fibres, 200 cm² — so the cells stay on the lumen side while the protectant leaves in the product stream. Both inline photometers are calibrated against a commercial BioDrop.',
+      cues: []
     },
     script: {
       lead: 'To ensure complete containment of the engineered <i class="sp">B. subtilis</i>, we engineered specialised bioreactor hardware.',
@@ -387,7 +386,7 @@ const SLIDES = [
       ${F('s7-d5-with', 'Pot with ACCD on day 5', 160, 'ph', 4)}
     </div>
     <div class="salt">
-      ${F('s7-salt-chart', 'Relative chlorophyll content at 300 mM NaCl, with and without ACCD', 200, '', 5, 'saltchart')}
+      ${F('s7-salt-chart', 'Relative chlorophyll content at 300 mM NaCl, with and without ACCD', 200, '', 5)}
     </div>
   </div>
 
