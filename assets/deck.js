@@ -18,11 +18,13 @@
         slide gets a highlight, not a zoom.
      4. Nobody has time to drive this during a talk, so steps stay few.
 
-   Which gives five animations in the whole deck: one reveal (slide 1), three
-   camera pushes (2, 3, 4) and one highlight (6). Slides 5, 7, 8 and 9 land
-   whole and never move.
+   Which gives four animations in the whole deck: three camera pushes (slides 2,
+   3 and 4) and one highlight (slide 6). Every other slide lands whole and never
+   moves. Nothing anywhere is held back — slide 1 held its answer until 28 Oct,
+   and Timmy had it land whole too.
 
-     base    the --d revealed on landing. Omitted means all of it.
+     base    the --d revealed on landing. Omitted means all of it, which is the
+             normal case; a value here is holding content back, so justify it.
      cues    0 to 2 steps, each {reveal: <--d>} | {focus: <data-f>} | {hi: true}
 
    Three conventions the view depends on:
@@ -76,11 +78,8 @@ const SLIDES = [
   </div>
 </div>`,
     run: {
-      base: 5,
-      say: 'As temperatures rise, crops fail under the stress — and the protectants that answer it stay in the lab, behind cost, public acceptance and the journey to the farm.',
-      cues: [
-        {reveal: 12, say: 'That is why we created ReLEAF: an on-site biomanufacturing unit that makes the protectant where and when the crop needs it.'}
-      ]
+      say: 'Crops are failing under climate stress, and the protectants that answer it stay in the lab — behind cost, public acceptance, and the journey to the farm. ReLEAF makes the protectant on the farm, where and when the crop needs it.',
+      cues: []
     },
     script: {
       lead: 'As temperatures rise year by year, crops increasingly fail to respond to the rising climate stress.',

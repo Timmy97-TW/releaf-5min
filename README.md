@@ -16,8 +16,8 @@ clock, `Esc` back to the script. The clock turns red past 5:00. `show.html#4` op
 
 **With animation** — `→` forward, `←` back, `space` play or pause, `1`–`9` jump, `r` restart,
 `c` hide the spoken line, `f` full screen. Forward means the next slide, unless that slide still
-has an animation waiting, in which case it fires that first. Nine slides and five animations is
-fourteen presses for the whole talk. It starts playing on its own against the 5:00 clock, and any
+has an animation waiting, in which case it fires that first. Nine slides and four animations is
+thirteen presses for the whole talk. It starts playing on its own against the 5:00 clock, and any
 arrow key pauses it.
 
 ## How the animation is built
@@ -31,12 +31,12 @@ Five rules, Timmy's, 28 Oct:
    gets a highlight, not a zoom.
 4. Nobody has time to drive this during a talk, so steps stay few.
 
-Which comes to **five animations in the whole deck**, and **fourteen steps** for
-five minutes:
+Which comes to **four animations in the whole deck**, and **thirteen steps** for
+five minutes. Every slide lands whole; nothing anywhere is held back:
 
 | Slide | Lands with | Animation |
 | --- | --- | --- |
-| 1 Why manufacture on the farm | the problem panel | the ReLEAF answer arrives |
+| 1 Why manufacture on the farm | everything | — |
 | 2 The light-controlled circuit | everything | push onto the module diagram |
 | 3 Does the circuit answer to light | everything | push onto the DNPH panel |
 | 4 The hardware that contains it | everything | push onto the flow schematic |
@@ -46,9 +46,10 @@ five minutes:
 | 8 What has moved since the freeze | everything | — |
 | 9 Where this goes next | everything | — |
 
-Each slide carries a `run` block in `assets/deck.js`: `base` is how far down the
-slide to reveal on landing (omitted means all of it) and `cues` is zero to two
-steps, each `{reveal}`, `{focus}` or `{hi: true}`. A slide lands in one quiet
+Each slide carries a `run` block in `assets/deck.js`: `cues` is zero to two
+steps, each `{reveal}`, `{focus}` or `{hi: true}`. There is also a `base`, the
+`--d` to reveal on landing — no slide uses it now, and a value there means
+content is being held back, so it needs a reason. A slide lands in one quiet
 fade with no stagger and no movement, and slide to slide is a plain cross-fade.
 
 Three conventions to keep:
