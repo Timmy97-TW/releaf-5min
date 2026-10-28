@@ -31,7 +31,7 @@ a{color:inherit}
 /* entrance steps */
 .st{opacity:0;transform:translateY(14px);
   transition:opacity .62s var(--ease),transform .62s var(--ease);
-  transition-delay:calc(var(--d,0) * 85ms)}
+  transition-delay:calc(var(--d,0) * 60ms)}
 .st.zoom{transform:translateY(10px) scale(.985)}
 .go .st{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
@@ -147,3 +147,23 @@ i.sp{font-style:italic}
 .s9 .renders{position:relative}
 .s9 .r-unit{position:absolute;right:12px;top:0;width:188px}
 .s9 .r-core{position:absolute;right:36px;bottom:0;width:368px}
+
+/* ============================================================
+   VIEW SWITCHER — the same three names on every page
+   ============================================================ */
+.vsw{display:flex;align-items:center;gap:2px;padding:3px;border-radius:980px;
+  background:rgba(29,29,27,.05);border:1px solid var(--line-2)}
+.vsw a{position:relative;display:block;text-decoration:none;white-space:nowrap;
+  font-size:13.5px;font-weight:550;letter-spacing:-.005em;color:var(--ink-2);
+  padding:6px 14px;border-radius:980px;
+  transition:color .2s var(--ease),background .2s var(--ease)}
+.vsw a:hover{color:var(--ink)}
+.vsw a[aria-current]{background:#fff;color:var(--ink);font-weight:650;
+  box-shadow:0 1px 2px rgba(0,0,0,.07),0 1px 10px -4px rgba(0,0,0,.25)}
+.vsw.on-dark{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.14)}
+.vsw.on-dark a{color:rgba(255,255,255,.66)}
+.vsw.on-dark a:hover{color:#fff}
+.vsw.on-dark a[aria-current]{background:rgba(255,255,255,.95);color:#1d1d1b;box-shadow:none}
+@media (max-width:720px){
+  .vsw a{padding:6px 10px;font-size:12.5px}
+}

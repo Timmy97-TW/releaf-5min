@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReLEAF · With animation</title>
+<meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, played against the script.">
+<link rel="stylesheet" href="assets/deck.css?v=2">
+<style>
+html,body{height:100%;overflow:hidden;background:#f2f2ef}
+
+/* ---------- stage, camera, caption ---------- */
+.deck{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:0}
+.frame{position:relative;background:#fff;border-radius:16px;overflow:hidden;flex:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.05),0 36px 90px -40px rgba(0,0,0,.45)}
+.slide{position:absolute;inset:0;overflow:hidden;opacity:0;visibility:hidden;
+  transition:opacity .38s var(--ease),visibility 0s linear .38s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .38s var(--ease),visibility 0s}
+.cam{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0}
+.cam>.stage{position:absolute;left:0;top:0;transform-origin:0 0;
+  transition:transform 1.25s cubic-bezier(.33,0,.1,1)}
+
+/* every entrance is gated by its beat, not by a fixed stagger */
+.cam .st{opacity:0;transform:translateY(20px);
+  transition:opacity 1s var(--ease),transform 1s var(--ease);
+  transition-delay:var(--sd,0ms)}
+.cam .st.zoom{transform:translateY(15px) scale(.962)}
+.cam .st.in{opacity:1;transform:none}
+.cam .s1-left.in>img{transform:scale(1)}
+
+.cap-line{flex:none;width:min(1100px,88vw);text-align:center;padding:26px 0 0;
+  min-height:92px}
+.cap-line p{margin:0;font-size:20px;line-height:1.46;color:var(--ink-2);
+  letter-spacing:-.005em;opacity:0;transition:opacity .4s var(--ease)}
+.cap-line p.on{opacity:1}
+body.nocap .cap-line{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .cam>.stage{transition-duration:.01ms}
+  .cam .st{transition-duration:.01ms;transition-delay:0ms !important}
+}
+
+/* ---------- chrome ---------- */
+.chr{position:fixed;z-index:21;opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
+.chr.show{opacity:1;pointer-events:auto}
+
+.topbar{left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:18px;padding:0 22px}
+.where{font-size:13.5px;font-weight:600;color:var(--ink-2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.where b{color:var(--ink);font-weight:700}
+.topbar .vsw{margin-left:auto;flex:none;background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+
+.hud{left:50%;bottom:24px;transform:translateX(-50%);display:flex;align-items:center;gap:12px;
+  padding:7px 12px 7px 7px;border-radius:980px;
+  background:rgba(255,255,255,.84);border:1px solid var(--line-2);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+  box-shadow:0 10px 30px -14px rgba(0,0,0,.3)}
+.hud button{border:0;background:var(--bg-2);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;transition:background .18s var(--ease)}
+.hud button:hover{background:#e3e3dc}
+.hud .play{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px}
+.hud .play:hover{background:#000}
+.hud .sm{width:28px;height:28px;border-radius:50%;font-size:13px}
+.hud .ct{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums;
+  padding-left:4px}
+.hud .tm{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+  padding-left:12px;border-left:1px solid var(--line);min-width:72px}
+
+/* beat pips: one row per slide, the current slide's beats spelled out */
+.pips{left:50%;bottom:74px;transform:translateX(-50%);display:flex;align-items:center;gap:5px}
+.pips .s{display:flex;gap:3px;padding:4px 5px;border-radius:980px;cursor:pointer;
+  transition:background .2s var(--ease)}
+.pips .s:hover{background:rgba(29,29,27,.07)}
+.pips i{display:block;width:5px;height:5px;border-radius:50%;background:rgba(29,29,27,.17);
+  transition:background .3s var(--ease),width .3s var(--ease)}
+.pips .s.done i{background:rgba(29,29,27,.3)}
+.pips .s.now i{background:var(--olive)}
+.pips .s.now i.at{width:16px}
+
+.bar{position:fixed;left:0;right:0;bottom:0;height:3px;background:rgba(29,29,27,.08);z-index:20}
+.bar i{display:block;height:100%;background:var(--olive);width:0;transition:width .5s var(--ease)}
+
+.keys{right:22px;bottom:84px;font-size:12px;line-height:1.7;color:var(--ink-3);text-align:right}
+.keys b{color:var(--ink-2);font-weight:650}
+@media (max-width:900px){.keys{display:none}}
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="frame" id="frame"></div>
+  <div class="cap-line"><p id="cap"></p></div>
+</div>
+
+<div class="chr topbar" id="topbar">
+  <span class="where" id="where"></span>
+  <div id="vsw"></div>
+</div>
+
+<div class="chr pips" id="pips"></div>
+
+<div class="chr hud" id="hud">
+  <button class="play" id="play" title="Play / pause">&#9654;</button>
+  <button class="sm" id="prev" title="Previous beat">&#8249;</button>
+  <button class="sm" id="next" title="Next beat">&#8250;</button>
+  <span class="ct" id="ct">01 / 09</span>
+  <span class="tm" id="tm">0:00 / 5:00</span>
+  <button class="sm" id="full" title="Full screen">&#9633;</button>
+</div>
+
+<div class="chr keys" id="keys">
+  <div><b>space</b> play / pause &nbsp; <b>&larr; &rarr;</b> step</div>
+  <div><b>&uarr; &darr;</b> slide &nbsp; <b>1–9</b> jump &nbsp; <b>r</b> restart</div>
+  <div><b>c</b> hide the line &nbsp; <b>f</b> full screen</div>
+</div>
+
+<div class="bar"><i id="barI"></i></div>
+
+<script src="assets/nav.js?v=2"></script>
+<script src="assets/deck.js?v=2"></script>
+<script>
+document.getElementById('vsw').innerHTML = viewSwitcher('animate', false);
+
+/* ------------------------------------------------------------------
+   Build: one run is a flat list of beats across all nine slides.
+   ------------------------------------------------------------------ */
+const frame = document.getElementById('frame');
+frame.innerHTML = SLIDES.map((s,i) =>
+  `<div class="slide" data-i="${i}"><div class="cam"><div class="stage">${s.stage}</div></div></div>`
+).join('');
+
+const slideEls = [...frame.querySelectorAll('.slide')];
+const camEls   = [...frame.querySelectorAll('.cam')];
+const stageEls = [...frame.querySelectorAll('.stage')];
+
+/* every .st element of a slide, sorted by its --d reveal step */
+const steps = stageEls.map(st => [...st.querySelectorAll('.st')].map(el => ({
+  el, d: parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0
+})).sort((a,b) => a.d - b.d));
+
+/* beat durations: the slide's own seconds, split by how much there is to say */
+const RUN = [];
+SLIDES.forEach((s,i) => {
+  const w = s.beats.map(b => Math.max(5, (b.say || '').trim().split(/\s+/).length));
+  const tot = w.reduce((a,b) => a+b, 0);
+  s.beats.forEach((b,j) => RUN.push({
+    si: i, bi: j, beat: b,
+    ms: Math.max(1900, Math.round(s.secs * 1000 * w[j] / tot))
+  }));
+});
+const TOTAL = RUN.reduce((a,r) => a + r.ms, 0);
+
+/* ------------------------------------------------------------------
+   Camera. Targets are measured once, in 1600x900 stage coordinates,
+   while every stage still sits at identity.
+   ------------------------------------------------------------------ */
+const PAD = 72, MAXZOOM = 1.85;
+/* The camera may run a little past the stage edge so a corner figure can still
+   sit in the middle of the frame. What shows past the edge is the same white as
+   the stage, so the overshoot is invisible — keep it that way. */
+const SLACK = 210;
+const boxes = stageEls.map(() => ({}));
+let fitScale = 1;
+
+function measure(){
+  stageEls.forEach((st,i) => {
+    const base = st.getBoundingClientRect();
+    st.querySelectorAll('[data-f]').forEach(el => {
+      const r = el.getBoundingClientRect();
+      boxes[i][el.dataset.f] = {
+        x: (r.left - base.left) / fitScale,
+        y: (r.top  - base.top ) / fitScale,
+        w: r.width  / fitScale,
+        h: r.height / fitScale
+      };
+    });
+  });
+}
+
+function camStyle(i, key, over){
+  if (!key) {
+    const k = over || 1;
+    return `translate(${(1600 - 1600*k)/2}px,${(900 - 900*k)/2}px) scale(${k})`;
+  }
+  const b = boxes[i][key];
+  if (!b) return 'translate(0px,0px) scale(1)';
+  const k = Math.min(MAXZOOM,
+    Math.max(1, Math.min((1600 - PAD*2) / b.w, (900 - PAD*2) / b.h)));
+  let tx = 800 - k * (b.x + b.w/2);
+  let ty = 450 - k * (b.y + b.h/2);
+  tx = Math.min(SLACK, Math.max(1600 - 1600*k - SLACK, tx));
+  ty = Math.min(SLACK, Math.max( 900 -  900*k - SLACK, ty));
+  return `translate(${tx}px,${ty}px) scale(${k})`;
+}
+
+/* ------------------------------------------------------------------
+   Layout
+   ------------------------------------------------------------------ */
+function fit(){
+  const capH = document.body.classList.contains('nocap') ? 0 : 118;
+  const w = innerWidth  - 96;
+  const h = innerHeight - 96 - capH;
+  fitScale = Math.max(.1, Math.min(w/1600, h/900));
+  frame.style.width  = (1600*fitScale) + 'px';
+  frame.style.height = ( 900*fitScale) + 'px';
+  camEls.forEach(c => c.style.transform = `scale(${fitScale})`);
+}
+
+/* ------------------------------------------------------------------
+   Playback
+   ------------------------------------------------------------------ */
+let at = -1, playing = false, timer = null, lastKey = null;
+const capEl = document.getElementById('cap');
+
+function revealTo(si, upto, delayBase, stagger){
+  steps[si].forEach(s => {
+    const want = s.d <= upto;
+    if (want && !s.el.classList.contains('in')) s.el.dataset.fresh = '1';
+    else delete s.el.dataset.fresh;
+    if (!want) s.el.classList.remove('in');
+  });
+  let k = 0;
+  steps[si].forEach(s => {
+    if (s.el.dataset.fresh) {
+      s.el.style.setProperty('--sd', (delayBase + k*stagger) + 'ms');
+      k++;
+      s.el.classList.add('in');
+      delete s.el.dataset.fresh;
+    }
+  });
+}
+
+function show(n, instant){
+  n = Math.max(0, Math.min(RUN.length-1, n));
+  const prevAt = at;
+  const prev = at >= 0 ? RUN[at] : null;
+  const r = RUN[n];
+  at = n;
+
+  const newSlide = !prev || prev.si !== r.si;
+  /* a jump — a pip, a number key, a deep link — is not a step through the run,
+     so the beats it skipped are put up at once rather than staged */
+  const jumped = instant || n !== prevAt + 1;
+  if (newSlide) {
+    slideEls.forEach((el,i) => el.classList.toggle('on', i === r.si));
+    lastKey = null;
+    /* everything on the incoming slide starts hidden */
+    steps[r.si].forEach(s => { s.el.classList.remove('in'); s.el.style.removeProperty('--sd'); });
+    /* and the slide settles out of a slight over-scale */
+    const st = stageEls[r.si];
+    st.style.transition = 'none';
+    st.style.transform = camStyle(r.si, null, 1.035);
+    void st.offsetWidth;
+    st.style.transition = '';
+  }
+
+  const key = r.beat.f || null;
+  const moved = key !== lastKey;
+  stageEls[r.si].style.transform = camStyle(r.si, key);
+  lastKey = key;
+
+  if (jumped) {
+    /* catch the slide up to where this beat starts, then stage nothing */
+    revealTo(r.si, r.beat.upto, 0, 0);
+  } else {
+    /* when the camera travels, let it land before anything new arrives */
+    revealTo(r.si, r.beat.upto, moved ? 620 : newSlide ? 420 : 160, 120);
+  }
+
+  capEl.classList.remove('on');
+  setTimeout(() => { capEl.textContent = r.beat.say || ''; capEl.classList.add('on'); }, 170);
+
+  const s = SLIDES[r.si];
+  document.getElementById('where').innerHTML = `<b>${s.title}</b> &nbsp;·&nbsp; ${s.nav}`;
+  document.getElementById('ct').textContent =
+    String(r.si+1).padStart(2,'0') + ' / ' + String(SLIDES.length).padStart(2,'0');
+  document.getElementById('barI').style.width =
+    (RUN.slice(0, n+1).reduce((a,x) => a + x.ms, 0) / TOTAL * 100) + '%';
+  paintPips();
+  location.hash = r.si + 1;
+
+  if (playing) arm();
+}
+
+function arm(){
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (at >= RUN.length - 1) { pause(); return; }
+    show(at + 1);
+  }, RUN[at].ms);
+}
+
+function play(){
+  if (at >= RUN.length - 1) { restart(); return; }
+  playing = true;
+  document.getElementById('play').innerHTML = '&#10073;&#10073;';
+  startClock(); arm();
+}
+function pause(){
+  playing = false;
+  document.getElementById('play').innerHTML = '&#9654;';
+  clearTimeout(timer);
+}
+function toggle(){ playing ? pause() : play(); }
+
+function step(d){
+  pause();
+  show(at + d);
+}
+function gotoSlide(i){
+  pause();
+  i = Math.max(0, Math.min(SLIDES.length-1, i));
+  show(RUN.findIndex(r => r.si === i));
+}
+function restart(){
+  pause(); resetClock();
+  at = -1; lastKey = null;
+  stageEls.forEach((st,i) => steps[i].forEach(s => s.el.classList.remove('in')));
+  show(0, true);
+  play();
+}
+
+/* ------------------------------------------------------------------
+   Pips, clock, chrome
+   ------------------------------------------------------------------ */
+const pips = document.getElementById('pips');
+pips.innerHTML = SLIDES.map((s,i) =>
+  `<span class="s" data-i="${i}" title="${s.title}">${s.beats.map(()=>'<i></i>').join('')}</span>`).join('');
+[...pips.children].forEach(el => el.onclick = () => gotoSlide(+el.dataset.i));
+
+function paintPips(){
+  const r = RUN[at];
+  [...pips.children].forEach((el,i) => {
+    el.classList.toggle('now',  i === r.si);
+    el.classList.toggle('done', i <  r.si);
+    [...el.children].forEach((pip,j) => pip.classList.toggle('at', i === r.si && j === r.bi));
+  });
+}
+
+let t0 = null, tick = null;
+const tm = document.getElementById('tm');
+function startClock(){
+  if (tick) return;
+  if (!t0) t0 = Date.now();
+  tick = setInterval(() => {
+    const s = Math.floor((Date.now()-t0)/1000);
+    tm.textContent = Math.floor(s/60) + ':' + String(s%60).padStart(2,'0') + ' / 5:00';
+    tm.style.color = s > 300 ? '#a33' : '';
+  }, 250);
+}
+function resetClock(){
+  clearInterval(tick); tick = null; t0 = null;
+  tm.textContent = '0:00 / 5:00'; tm.style.color = '';
+}
+
+document.getElementById('play').onclick = toggle;
+document.getElementById('next').onclick = () => step(1);
+document.getElementById('prev').onclick = () => step(-1);
+document.getElementById('full').onclick = toggleFull;
+function toggleFull(){
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen?.();
+}
+
+addEventListener('keydown', e => {
+  if (e.key === ' ')            { e.preventDefault(); toggle(); }
+  else if (['ArrowRight','PageDown'].includes(e.key)) { e.preventDefault(); step(1); }
+  else if (['ArrowLeft','PageUp'].includes(e.key))    { e.preventDefault(); step(-1); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); gotoSlide(RUN[at].si + 1); }
+  else if (e.key === 'ArrowUp')   { e.preventDefault(); gotoSlide(RUN[at].si - 1); }
+  else if (/^[1-9]$/.test(e.key)) gotoSlide(+e.key - 1);
+  else if (e.key === 'r') restart();
+  else if (e.key === 'f') toggleFull();
+  else if (e.key === 'c') { document.body.classList.toggle('nocap'); fit(); }
+  else if (e.key === 'Escape') location.href = 'index.html';
+});
+frame.addEventListener('click', e => step(e.clientX < innerWidth/2 ? -1 : 1));
+
+const chrome = [...document.querySelectorAll('.chr')];
+let idle;
+function wake(){
+  chrome.forEach(c => c.classList.add('show'));
+  clearTimeout(idle);
+  idle = setTimeout(() => chrome.forEach(c => c.classList.remove('show')), 2800);
+}
+['mousemove','keydown','click','touchstart'].forEach(ev => addEventListener(ev, wake));
+
+addEventListener('resize', () => { fit(); measure(); });
+
+/* ------------------------------------------------------------------
+   Start. Measure before the first camera move, honour #n deep links.
+   ------------------------------------------------------------------ */
+function boot(){
+  fit();
+  measure();
+  const n = parseInt(location.hash.slice(1), 10);
+  const si = Number.isFinite(n) && n >= 1 && n <= SLIDES.length ? n-1 : 0;
+  show(RUN.findIndex(r => r.si === si), true);
+  wake();
+  setTimeout(play, 900);
+}
+if (document.readyState === 'complete') boot();
+else addEventListener('load', boot);
+</script>
+</body>
+</html>

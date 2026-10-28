@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ReLEAF · Presentation</title>
+<title>ReLEAF · Slides</title>
 <meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, nine slides.">
-<link rel="stylesheet" href="assets/deck.css?v=1">
+<link rel="stylesheet" href="assets/deck.css?v=2">
 <style>
 html,body{height:100%;overflow:hidden;background:#f2f2ef}
 .deck{position:fixed;inset:0;display:grid;place-items:center}
@@ -20,14 +20,21 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
 .bar{position:fixed;left:0;right:0;bottom:0;height:3px;background:rgba(29,29,27,.08);z-index:20}
 .bar i{display:block;height:100%;background:var(--olive);width:0;
   transition:width .34s var(--ease)}
-.hud{position:fixed;z-index:21;display:flex;align-items:center;gap:14px;
+.chr{position:fixed;z-index:21;opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
+.chr.show{opacity:1;pointer-events:auto}
+
+.topbar{left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:18px;padding:0 22px}
+.topbar .where{font-size:13.5px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+.topbar .where b{color:var(--ink);font-weight:700}
+.topbar .vsw{margin-left:auto;background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px)}
+
+.hud{display:flex;align-items:center;gap:14px;
   left:50%;bottom:26px;transform:translateX(-50%);
   padding:8px 10px 8px 16px;border-radius:980px;
   background:rgba(255,255,255,.82);border:1px solid var(--line-2);
   backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-  box-shadow:0 10px 30px -14px rgba(0,0,0,.3);
-  opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
-.hud.show{opacity:1;pointer-events:auto}
+  box-shadow:0 10px 30px -14px rgba(0,0,0,.3)}
 .hud .ct{font-size:13px;font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums;
   letter-spacing:.02em}
 .hud .tm{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
@@ -36,26 +43,22 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
   color:var(--ink);font-size:14px;cursor:pointer;display:grid;place-items:center;
   transition:background .18s var(--ease)}
 .hud button:hover{background:#e8e8e2}
-.dots{position:fixed;z-index:21;left:50%;bottom:72px;transform:translateX(-50%);
-  display:flex;gap:7px;opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
-.dots.show{opacity:1;pointer-events:auto}
+.dots{left:50%;bottom:72px;transform:translateX(-50%);display:flex;gap:7px}
 .dots b{width:7px;height:7px;border-radius:50%;background:rgba(29,29,27,.2);cursor:pointer;
   transition:background .2s var(--ease),transform .2s var(--ease)}
 .dots b.on{background:var(--olive);transform:scale(1.35)}
-.back{position:fixed;z-index:21;left:22px;top:20px;font-size:13px;font-weight:550;
-  text-decoration:none;color:var(--ink-2);padding:7px 14px;border-radius:980px;
-  background:rgba(255,255,255,.8);border:1px solid var(--line-2);
-  opacity:0;transition:opacity .3s var(--ease);pointer-events:none}
-.back.show{opacity:1;pointer-events:auto}
 </style>
 </head>
 <body>
 
 <div class="deck"><div class="frame" id="frame"></div></div>
 
-<a class="back" id="back" href="index.html">Slides and script</a>
-<div class="dots" id="dots"></div>
-<div class="hud" id="hud">
+<div class="chr topbar" id="topbar">
+  <span class="where" id="where"></span>
+  <div id="vsw"></div>
+</div>
+<div class="chr dots" id="dots"></div>
+<div class="chr hud" id="hud">
   <span class="ct" id="ct">01 / 09</span>
   <span class="tm" id="tm">0:00</span>
   <button id="prev" title="Previous">&#8249;</button>
@@ -64,14 +67,17 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
 </div>
 <div class="bar"><i id="barI"></i></div>
 
-<script src="assets/deck.js?v=1"></script>
+<script src="assets/nav.js?v=2"></script>
+<script src="assets/deck.js?v=2"></script>
 <script>
+document.getElementById('vsw').innerHTML = viewSwitcher('slides');
+
 const frame = document.getElementById('frame');
 frame.innerHTML = SLIDES.map((s,i) =>
   `<div class="slide" data-i="${i}"><div class="stage">${s.stage}</div></div>`).join('');
 const slides = [...frame.querySelectorAll('.slide')];
 const dots = document.getElementById('dots');
-dots.innerHTML = SLIDES.map((s,i)=>`<b data-i="${i}"></b>`).join('');
+dots.innerHTML = SLIDES.map((s,i)=>`<b data-i="${i}" title="${s.title}"></b>`).join('');
 const dotEls = [...dots.querySelectorAll('b')];
 
 let cur = 0;
@@ -101,6 +107,8 @@ function go(i, instant){
   dotEls.forEach((d,k)=> d.classList.toggle('on', k===cur));
   document.getElementById('ct').textContent =
     String(cur+1).padStart(2,'0') + ' / ' + String(SLIDES.length).padStart(2,'0');
+  document.getElementById('where').innerHTML =
+    `<b>${SLIDES[cur].title}</b> &nbsp;·&nbsp; ${SLIDES[cur].nav}`;
   document.getElementById('barI').style.width =
     ((cur+1)/SLIDES.length*100) + '%';
   location.hash = cur+1;
@@ -113,6 +121,7 @@ addEventListener('keydown', e => {
   else if (e.key === 'End') go(SLIDES.length-1);
   else if (e.key === 'f') toggleFull();
   else if (e.key === 't') toggleTimer();
+  else if (e.key === 'Escape') location.href = 'index.html';
   else if (/^[1-9]$/.test(e.key)) go(+e.key - 1);
 });
 document.getElementById('next').onclick = ()=> go(cur+1);
@@ -148,7 +157,7 @@ function toggleTimer(){
 addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === ' ') startClock(); });
 
 /* chrome fades out while idle */
-const chrome = [document.getElementById('hud'), dots, document.getElementById('back')];
+const chrome = [...document.querySelectorAll('.chr')];
 let idle;
 function wake(){
   chrome.forEach(c => c.classList.add('show'));
