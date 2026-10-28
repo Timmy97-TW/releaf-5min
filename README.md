@@ -14,30 +14,56 @@ The GEMS Taiwan 2026 five-minute judging deck, rebuilt as a web page. Three view
 **Slides** — `→ ↓ space` next, `← ↑` back, `1`–`9` jump, `f` full screen, `t` start or reset the
 clock, `Esc` back to the script. The clock turns red past 5:00. `show.html#4` opens at slide 4.
 
-**With animation** — `space` play or pause, `← →` step a beat, `↑ ↓` a whole slide, `1`–`9` jump,
-`r` restart, `c` hide the spoken line, `f` full screen. It starts playing on its own, and any
-arrow key pauses it so you can sit on a beat.
+**With animation** — `→` forward, `←` back, `space` play or pause, `1`–`9` jump, `r` restart,
+`c` hide the spoken line, `f` full screen. Forward means the next slide, unless that slide still
+has an animation waiting, in which case it fires that first. Nine slides and five animations is
+fourteen presses for the whole talk. It starts playing on its own against the 5:00 clock, and any
+arrow key pauses it.
 
 ## How the animation is built
 
-Each slide carries a `beats` array in `assets/deck.js`: one entry per spoken line, saying how far
-down the slide to reveal and whether the camera sits wide or on one figure.
+Five rules, Timmy's, 28 Oct:
 
-The deck holds **four camera moves in five minutes** — slides 2, 3, 4 and 7. Everything else is
-revealed on a still frame, because a push of less than about 1.4× is motion without payoff, and a
-full-height target cannot zoom at all. A beat with no target after a beat with one is the zoom back
-out, and it is usually also the moment new figures arrive.
+1. Landing on a slide shows most of its content. Hold something back only when the
+   delay is a key result and it means something.
+2. Never hold back two results.
+3. At most two animations on a slide, and most slides want none. The agar slide
+   gets a highlight, not a zoom.
+4. Nobody has time to drive this during a talk, so steps stay few.
 
-Two conventions the animation depends on:
+Which comes to **five animations in the whole deck**, and **fourteen steps** for
+five minutes:
 
-- `--d` on a `.st` element is its reveal order, counting from 0 **in the order the speaker reaches
-  it**. It doubles as the stagger delay in the other two views, so it must never run backwards down
-  the page. Items that should land together share a number.
-- `data-f="key"` marks something the camera may move to. Put it on the figure, not on a wrapper —
-  a wrapper with empty space beside the figure frames the empty space.
+| Slide | Lands with | Animation |
+| --- | --- | --- |
+| 1 Why manufacture on the farm | the problem panel | the ReLEAF answer arrives |
+| 2 The light-controlled circuit | everything | push onto the module diagram |
+| 3 Does the circuit answer to light | everything | push onto the DNPH panel |
+| 4 The hardware that contains it | everything | push onto the flow schematic |
+| 5 What the reactor produced | everything | — |
+| 6 Does the protectant protect | everything | the two key numbers highlight in place |
+| 7 The same test in soil | everything | — |
+| 8 What has moved since the freeze | everything | — |
+| 9 Where this goes next | everything | — |
 
-Beat durations come from each slide's `secs`, split by how much there is to say, so the run totals
-5:00.
+Each slide carries a `run` block in `assets/deck.js`: `base` is how far down the
+slide to reveal on landing (omitted means all of it) and `cues` is zero to two
+steps, each `{reveal}`, `{focus}` or `{hi: true}`. A slide lands in one quiet
+fade with no stagger and no movement, and slide to slide is a plain cross-fade.
+
+Three conventions to keep:
+
+- `--d` on a `.st` element is its reveal order, counting from 0 **in the order the
+  speaker reaches it**. It doubles as the stagger delay in the other two views, so
+  it must never run backwards down the page. Items that land together share a
+  number, and `base` / `reveal` name a `--d`.
+- `data-f="key"` marks something the camera may move to. Put it on the figure, not
+  on a wrapper — a wrapper with empty space beside the figure frames the empty
+  space. A target earns a push only if it is worth 1.4x or more; anything
+  full-height cannot zoom at all, so four earlier candidates were dropped.
+- `data-hi` marks a key result the highlight lifts in place, without moving it.
+
+Each slide's `secs` is split between its steps, so the run totals 5:00.
 
 ## Build
 

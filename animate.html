@@ -5,40 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReLEAF · With animation</title>
 <meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, played against the script.">
-<link rel="stylesheet" href="assets/deck.css?v=2">
+<link rel="stylesheet" href="assets/deck.css?v=3">
 <style>
 html,body{height:100%;overflow:hidden;background:#f2f2ef}
 
 /* ---------- stage, camera, caption ---------- */
 .deck{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:0}
+  justify-content:center}
 .frame{position:relative;background:#fff;border-radius:16px;overflow:hidden;flex:none;
   box-shadow:0 2px 6px rgba(0,0,0,.05),0 36px 90px -40px rgba(0,0,0,.45)}
 .slide{position:absolute;inset:0;overflow:hidden;opacity:0;visibility:hidden;
-  transition:opacity .38s var(--ease),visibility 0s linear .38s}
-.slide.on{opacity:1;visibility:visible;transition:opacity .38s var(--ease),visibility 0s}
+  transition:opacity .34s var(--ease),visibility 0s linear .34s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .34s var(--ease),visibility 0s}
 .cam{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0}
 .cam>.stage{position:absolute;left:0;top:0;transform-origin:0 0;
-  transition:transform 1.25s cubic-bezier(.33,0,.1,1)}
+  transition:transform 1.3s cubic-bezier(.33,0,.1,1)}
 
-/* every entrance is gated by its beat, not by a fixed stagger */
-.cam .st{opacity:0;transform:translateY(20px);
-  transition:opacity 1s var(--ease),transform 1s var(--ease);
-  transition-delay:var(--sd,0ms)}
-.cam .st.zoom{transform:translateY(15px) scale(.962)}
-.cam .st.in{opacity:1;transform:none}
+/* a slide lands whole: one quiet fade, no stagger, no movement */
+.cam .st{opacity:0;transition:opacity .55s var(--ease);transform:none}
+.cam .st.zoom{transform:none}
+.cam .st.in{opacity:1}
 .cam .s1-left.in>img{transform:scale(1)}
 
-.cap-line{flex:none;width:min(1100px,88vw);text-align:center;padding:26px 0 0;
-  min-height:92px}
-.cap-line p{margin:0;font-size:20px;line-height:1.46;color:var(--ink-2);
+/* the one highlight: a key result lifts where it stands */
+.cam [data-hi]{border-radius:8px;padding:4px 10px;margin-left:-10px;
+  transition:background .75s var(--ease),color .75s var(--ease)}
+.cam [data-hi].hl{background:rgba(133,138,62,.17);color:var(--olive-d)}
+
+.cap-line{flex:none;width:min(1060px,88vw);text-align:center;padding:26px 0 0;min-height:92px}
+.cap-line p{margin:0;font-size:19px;line-height:1.46;color:var(--ink-2);
   letter-spacing:-.005em;opacity:0;transition:opacity .4s var(--ease)}
 .cap-line p.on{opacity:1}
 body.nocap .cap-line{display:none}
 
 @media (prefers-reduced-motion:reduce){
   .cam>.stage{transition-duration:.01ms}
-  .cam .st{transition-duration:.01ms;transition-delay:0ms !important}
+  .cam .st{transition-duration:.01ms}
 }
 
 /* ---------- chrome ---------- */
@@ -68,16 +70,15 @@ body.nocap .cap-line{display:none}
 .hud .tm{font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
   padding-left:12px;border-left:1px solid var(--line);min-width:72px}
 
-/* beat pips: one row per slide, the current slide's beats spelled out */
-.pips{left:50%;bottom:74px;transform:translateX(-50%);display:flex;align-items:center;gap:5px}
-.pips .s{display:flex;gap:3px;padding:4px 5px;border-radius:980px;cursor:pointer;
-  transition:background .2s var(--ease)}
-.pips .s:hover{background:rgba(29,29,27,.07)}
-.pips i{display:block;width:5px;height:5px;border-radius:50%;background:rgba(29,29,27,.17);
-  transition:background .3s var(--ease),width .3s var(--ease)}
-.pips .s.done i{background:rgba(29,29,27,.3)}
-.pips .s.now i{background:var(--olive)}
-.pips .s.now i.at{width:16px}
+/* one pip per slide; a slide that animates carries a ring */
+.pips{left:50%;bottom:74px;transform:translateX(-50%);display:flex;align-items:center;gap:9px}
+.pips b{position:relative;width:7px;height:7px;border-radius:50%;cursor:pointer;
+  background:rgba(29,29,27,.2);transition:background .3s var(--ease),transform .3s var(--ease)}
+.pips b.done{background:rgba(29,29,27,.34)}
+.pips b.now{background:var(--olive);transform:scale(1.35)}
+.pips b.cued:after{content:"";position:absolute;inset:-5px;border-radius:50%;
+  border:1px solid rgba(29,29,27,.22)}
+.pips b.now.cued:after{border-color:var(--olive)}
 
 .bar{position:fixed;left:0;right:0;bottom:0;height:3px;background:rgba(29,29,27,.08);z-index:20}
 .bar i{display:block;height:100%;background:var(--olive);width:0;transition:width .5s var(--ease)}
@@ -103,28 +104,29 @@ body.nocap .cap-line{display:none}
 
 <div class="chr hud" id="hud">
   <button class="play" id="play" title="Play / pause">&#9654;</button>
-  <button class="sm" id="prev" title="Previous beat">&#8249;</button>
-  <button class="sm" id="next" title="Next beat">&#8250;</button>
+  <button class="sm" id="prev" title="Back">&#8249;</button>
+  <button class="sm" id="next" title="Forward">&#8250;</button>
   <span class="ct" id="ct">01 / 09</span>
   <span class="tm" id="tm">0:00 / 5:00</span>
   <button class="sm" id="full" title="Full screen">&#9633;</button>
 </div>
 
 <div class="chr keys" id="keys">
-  <div><b>space</b> play / pause &nbsp; <b>&larr; &rarr;</b> step</div>
-  <div><b>&uarr; &darr;</b> slide &nbsp; <b>1–9</b> jump &nbsp; <b>r</b> restart</div>
-  <div><b>c</b> hide the line &nbsp; <b>f</b> full screen</div>
+  <div><b>&rarr;</b> forward &nbsp; <b>&larr;</b> back &nbsp; <b>space</b> play / pause</div>
+  <div><b>1–9</b> jump to a slide &nbsp; <b>r</b> restart</div>
+  <div><b>c</b> hide the spoken line &nbsp; <b>f</b> full screen</div>
 </div>
 
 <div class="bar"><i id="barI"></i></div>
 
-<script src="assets/nav.js?v=2"></script>
-<script src="assets/deck.js?v=2"></script>
+<script src="assets/nav.js?v=3"></script>
+<script src="assets/deck.js?v=3"></script>
 <script>
 document.getElementById('vsw').innerHTML = viewSwitcher('animate', false);
 
 /* ------------------------------------------------------------------
-   Build: one run is a flat list of beats across all nine slides.
+   Build. A step is either landing on a slide or firing one of its cues,
+   so a nine-slide run with five cues is fourteen presses, not forty.
    ------------------------------------------------------------------ */
 const frame = document.getElementById('frame');
 frame.innerHTML = SLIDES.map((s,i) =>
@@ -135,32 +137,31 @@ const slideEls = [...frame.querySelectorAll('.slide')];
 const camEls   = [...frame.querySelectorAll('.cam')];
 const stageEls = [...frame.querySelectorAll('.stage')];
 
-/* every .st element of a slide, sorted by its --d reveal step */
 const steps = stageEls.map(st => [...st.querySelectorAll('.st')].map(el => ({
   el, d: parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0
-})).sort((a,b) => a.d - b.d));
+})));
+const maxD = steps.map(ss => ss.reduce((a,s) => Math.max(a, s.d), 0));
 
-/* beat durations: the slide's own seconds, split by how much there is to say */
 const RUN = [];
 SLIDES.forEach((s,i) => {
-  const w = s.beats.map(b => Math.max(5, (b.say || '').trim().split(/\s+/).length));
-  const tot = w.reduce((a,b) => a+b, 0);
-  s.beats.forEach((b,j) => RUN.push({
-    si: i, bi: j, beat: b,
-    ms: Math.max(1900, Math.round(s.secs * 1000 * w[j] / tot))
+  const cues = s.run.cues || [];
+  /* the slide's seconds go mostly to the landing; a cue takes the tail */
+  const share = [[1], [0.6, 0.4], [0.5, 0.28, 0.22]][cues.length];
+  RUN.push({si: i, ci: -1, say: s.run.say,
+            upto: s.run.base != null ? s.run.base : maxD[i],
+            ms: Math.round(s.secs * 1000 * share[0])});
+  cues.forEach((c,j) => RUN.push({
+    si: i, ci: j, say: c.say, cue: c,
+    upto: c.reveal != null ? c.reveal : null,
+    ms: Math.max(2600, Math.round(s.secs * 1000 * (share[j+1] || 0.2)))
   }));
 });
 const TOTAL = RUN.reduce((a,r) => a + r.ms, 0);
 
 /* ------------------------------------------------------------------
-   Camera. Targets are measured once, in 1600x900 stage coordinates,
-   while every stage still sits at identity.
+   Camera
    ------------------------------------------------------------------ */
-const PAD = 72, MAXZOOM = 1.85;
-/* The camera may run a little past the stage edge so a corner figure can still
-   sit in the middle of the frame. What shows past the edge is the same white as
-   the stage, so the overshoot is invisible — keep it that way. */
-const SLACK = 210;
+const PAD = 72, MAXZOOM = 1.85, SLACK = 210;
 const boxes = stageEls.map(() => ({}));
 let fitScale = 1;
 
@@ -170,39 +171,29 @@ function measure(){
     st.querySelectorAll('[data-f]').forEach(el => {
       const r = el.getBoundingClientRect();
       boxes[i][el.dataset.f] = {
-        x: (r.left - base.left) / fitScale,
-        y: (r.top  - base.top ) / fitScale,
-        w: r.width  / fitScale,
-        h: r.height / fitScale
+        x: (r.left - base.left)/fitScale, y: (r.top - base.top)/fitScale,
+        w: r.width/fitScale, h: r.height/fitScale
       };
     });
   });
 }
 
-function camStyle(i, key, over){
-  if (!key) {
-    const k = over || 1;
-    return `translate(${(1600 - 1600*k)/2}px,${(900 - 900*k)/2}px) scale(${k})`;
-  }
+function camStyle(i, key){
+  if (!key) return 'translate(0px,0px) scale(1)';
   const b = boxes[i][key];
   if (!b) return 'translate(0px,0px) scale(1)';
   const k = Math.min(MAXZOOM,
-    Math.max(1, Math.min((1600 - PAD*2) / b.w, (900 - PAD*2) / b.h)));
-  let tx = 800 - k * (b.x + b.w/2);
-  let ty = 450 - k * (b.y + b.h/2);
+    Math.max(1, Math.min((1600 - PAD*2)/b.w, (900 - PAD*2)/b.h)));
+  let tx = 800 - k*(b.x + b.w/2);
+  let ty = 450 - k*(b.y + b.h/2);
   tx = Math.min(SLACK, Math.max(1600 - 1600*k - SLACK, tx));
   ty = Math.min(SLACK, Math.max( 900 -  900*k - SLACK, ty));
   return `translate(${tx}px,${ty}px) scale(${k})`;
 }
 
-/* ------------------------------------------------------------------
-   Layout
-   ------------------------------------------------------------------ */
 function fit(){
   const capH = document.body.classList.contains('nocap') ? 0 : 118;
-  const w = innerWidth  - 96;
-  const h = innerHeight - 96 - capH;
-  fitScale = Math.max(.1, Math.min(w/1600, h/900));
+  fitScale = Math.max(.1, Math.min((innerWidth - 96)/1600, (innerHeight - 96 - capH)/900));
   frame.style.width  = (1600*fitScale) + 'px';
   frame.style.height = ( 900*fitScale) + 'px';
   camEls.forEach(c => c.style.transform = `scale(${fitScale})`);
@@ -211,66 +202,46 @@ function fit(){
 /* ------------------------------------------------------------------
    Playback
    ------------------------------------------------------------------ */
-let at = -1, playing = false, timer = null, lastKey = null;
+let at = -1, playing = false, timer = null;
 const capEl = document.getElementById('cap');
 
-function revealTo(si, upto, delayBase, stagger){
-  steps[si].forEach(s => {
-    const want = s.d <= upto;
-    if (want && !s.el.classList.contains('in')) s.el.dataset.fresh = '1';
-    else delete s.el.dataset.fresh;
-    if (!want) s.el.classList.remove('in');
+/* a slide is put into the state step n leaves it in, all at once */
+function paintSlide(si, ci){
+  const s = SLIDES[si];
+  const cues = s.run.cues || [];
+  let upto = s.run.base != null ? s.run.base : maxD[si];
+  let key = null, hi = false;
+  cues.slice(0, ci + 1).forEach(c => {
+    if (c.reveal != null) upto = c.reveal;
+    if (c.focus) key = c.focus;
+    if (c.hi) hi = true;
   });
-  let k = 0;
-  steps[si].forEach(s => {
-    if (s.el.dataset.fresh) {
-      s.el.style.setProperty('--sd', (delayBase + k*stagger) + 'ms');
-      k++;
-      s.el.classList.add('in');
-      delete s.el.dataset.fresh;
-    }
-  });
+  steps[si].forEach(x => x.el.classList.toggle('in', x.d <= upto));
+  stageEls[si].querySelectorAll('[data-hi]').forEach(el => el.classList.toggle('hl', hi));
+  stageEls[si].style.transform = camStyle(si, key);
 }
 
 function show(n, instant){
   n = Math.max(0, Math.min(RUN.length-1, n));
-  const prevAt = at;
   const prev = at >= 0 ? RUN[at] : null;
   const r = RUN[n];
   at = n;
 
-  const newSlide = !prev || prev.si !== r.si;
-  /* a jump — a pip, a number key, a deep link — is not a step through the run,
-     so the beats it skipped are put up at once rather than staged */
-  const jumped = instant || n !== prevAt + 1;
-  if (newSlide) {
-    slideEls.forEach((el,i) => el.classList.toggle('on', i === r.si));
-    lastKey = null;
-    /* everything on the incoming slide starts hidden */
-    steps[r.si].forEach(s => { s.el.classList.remove('in'); s.el.style.removeProperty('--sd'); });
-    /* and the slide settles out of a slight over-scale */
+  if (!prev || prev.si !== r.si) {
+    /* no settle, no drift: a plain cross-fade, and the slide is simply there */
     const st = stageEls[r.si];
     st.style.transition = 'none';
-    st.style.transform = camStyle(r.si, null, 1.035);
+    steps[r.si].forEach(x => x.el.classList.remove('in'));
+    stageEls[r.si].querySelectorAll('[data-hi]').forEach(el => el.classList.remove('hl'));
+    st.style.transform = 'translate(0px,0px) scale(1)';
     void st.offsetWidth;
     st.style.transition = '';
+    slideEls.forEach((el,i) => el.classList.toggle('on', i === r.si));
   }
-
-  const key = r.beat.f || null;
-  const moved = key !== lastKey;
-  stageEls[r.si].style.transform = camStyle(r.si, key);
-  lastKey = key;
-
-  if (jumped) {
-    /* catch the slide up to where this beat starts, then stage nothing */
-    revealTo(r.si, r.beat.upto, 0, 0);
-  } else {
-    /* when the camera travels, let it land before anything new arrives */
-    revealTo(r.si, r.beat.upto, moved ? 620 : newSlide ? 420 : 160, 120);
-  }
+  paintSlide(r.si, r.ci);
 
   capEl.classList.remove('on');
-  setTimeout(() => { capEl.textContent = r.beat.say || ''; capEl.classList.add('on'); }, 170);
+  setTimeout(() => { capEl.textContent = r.say || ''; capEl.classList.add('on'); }, 170);
 
   const s = SLIDES[r.si];
   document.getElementById('where').innerHTML = `<b>${s.title}</b> &nbsp;·&nbsp; ${s.nav}`;
@@ -291,7 +262,6 @@ function arm(){
     show(at + 1);
   }, RUN[at].ms);
 }
-
 function play(){
   if (at >= RUN.length - 1) { restart(); return; }
   playing = true;
@@ -304,11 +274,7 @@ function pause(){
   clearTimeout(timer);
 }
 function toggle(){ playing ? pause() : play(); }
-
-function step(d){
-  pause();
-  show(at + d);
-}
+function step(d){ pause(); show(at + d); }
 function gotoSlide(i){
   pause();
   i = Math.max(0, Math.min(SLIDES.length-1, i));
@@ -316,8 +282,8 @@ function gotoSlide(i){
 }
 function restart(){
   pause(); resetClock();
-  at = -1; lastKey = null;
-  stageEls.forEach((st,i) => steps[i].forEach(s => s.el.classList.remove('in')));
+  at = -1;
+  stageEls.forEach((st,i) => steps[i].forEach(x => x.el.classList.remove('in')));
   show(0, true);
   play();
 }
@@ -327,15 +293,13 @@ function restart(){
    ------------------------------------------------------------------ */
 const pips = document.getElementById('pips');
 pips.innerHTML = SLIDES.map((s,i) =>
-  `<span class="s" data-i="${i}" title="${s.title}">${s.beats.map(()=>'<i></i>').join('')}</span>`).join('');
+  `<b data-i="${i}" class="${(s.run.cues||[]).length ? 'cued' : ''}" title="${s.title}"></b>`).join('');
 [...pips.children].forEach(el => el.onclick = () => gotoSlide(+el.dataset.i));
-
 function paintPips(){
   const r = RUN[at];
   [...pips.children].forEach((el,i) => {
     el.classList.toggle('now',  i === r.si);
     el.classList.toggle('done', i <  r.si);
-    [...el.children].forEach((pip,j) => pip.classList.toggle('at', i === r.si && j === r.bi));
   });
 }
 
@@ -366,10 +330,8 @@ function toggleFull(){
 
 addEventListener('keydown', e => {
   if (e.key === ' ')            { e.preventDefault(); toggle(); }
-  else if (['ArrowRight','PageDown'].includes(e.key)) { e.preventDefault(); step(1); }
-  else if (['ArrowLeft','PageUp'].includes(e.key))    { e.preventDefault(); step(-1); }
-  else if (e.key === 'ArrowDown') { e.preventDefault(); gotoSlide(RUN[at].si + 1); }
-  else if (e.key === 'ArrowUp')   { e.preventDefault(); gotoSlide(RUN[at].si - 1); }
+  else if (['ArrowRight','ArrowDown','PageDown','Enter'].includes(e.key)) { e.preventDefault(); step(1); }
+  else if (['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key))  { e.preventDefault(); step(-1); }
   else if (/^[1-9]$/.test(e.key)) gotoSlide(+e.key - 1);
   else if (e.key === 'r') restart();
   else if (e.key === 'f') toggleFull();
@@ -386,12 +348,8 @@ function wake(){
   idle = setTimeout(() => chrome.forEach(c => c.classList.remove('show')), 2800);
 }
 ['mousemove','keydown','click','touchstart'].forEach(ev => addEventListener(ev, wake));
-
 addEventListener('resize', () => { fit(); measure(); });
 
-/* ------------------------------------------------------------------
-   Start. Measure before the first camera move, honour #n deep links.
-   ------------------------------------------------------------------ */
 function boot(){
   fit();
   measure();

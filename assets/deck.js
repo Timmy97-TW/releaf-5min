@@ -8,19 +8,33 @@
    Every slide is authored on a 1600x900 stage; the body box is 1448x652 at
    (76,190).
 
-   Two conventions the animated view depends on, so keep them when editing:
+   `run` is what the animated view does with a slide, and it is kept deliberately
+   thin. Five rules, in Timmy's words, that an edit must not break:
+
+     1. Landing on a slide shows most of its content. Hold something back only
+        when the delay is a key result and means something.
+     2. Never hold back two results.
+     3. At most two animations on a slide, and most slides want none. The agar
+        slide gets a highlight, not a zoom.
+     4. Nobody has time to drive this during a talk, so steps stay few.
+
+   Which gives five animations in the whole deck: one reveal (slide 1), three
+   camera pushes (2, 3, 4) and one highlight (6). Slides 5, 7, 8 and 9 land
+   whole and never move.
+
+     base    the --d revealed on landing. Omitted means all of it.
+     cues    0 to 2 steps, each {reveal: <--d>} | {focus: <data-f>} | {hi: true}
+
+   Three conventions the view depends on:
    * `--d` on a `.st` element is its reveal order, counting up from 0 **in the
      order the speaker reaches it**. It is a stagger delay in the other two
-     views and a reveal step here, so it must never go backwards down the page.
-     Items that should land together share a number.
-   * `data-f="key"` marks something the camera is allowed to move to. There are
-     four in the whole deck — slides 2, 3, 4 and 7 — and that is deliberate. A
-     target only earns one if framing it is worth at least a 1.4x push; anything
-     full-height cannot zoom, so it is revealed rather than approached.
-
-   `beats` is the spoken run of a slide. Each beat reveals everything up to
-   `upto`, says one line, and either holds the wide frame or sits on one `f`
-   target. A beat with no `f` after a beat with one is the zoom back out.
+     views and a reveal threshold here, so it must never go backwards down the
+     page. Items that land together share a number.
+   * `data-f="key"` marks something the camera may move to. Put it on the figure,
+     never on a wrapper with empty space beside it. A target earns a push only
+     if it is worth 1.4x or more; anything full-height cannot zoom at all.
+   * `data-hi` marks a key result the highlight cue lifts in place, without
+     moving anything.
    --------------------------------------------------------------------------- */
 
 const F = (src, alt, h, cls, d, f) =>
@@ -61,13 +75,13 @@ const SLIDES = [
     <img class="s1-box st zoom" style="--d:12" src="img/s1-reactor.webp" alt="The ReLEAF bioreactor unit, front view">
   </div>
 </div>`,
-    beats: [
-      {upto: 2, say: 'As temperatures rise year by year, crops increasingly fail to respond to the rising climate stress.'},
-      {upto: 3, say: 'Protectants exist, yet they are ready only in labs and often come at costs too high for farmers to access them.'},
-      {upto: 5, say: 'Three things keep them there. Production, transport and storage are expensive. Spraying engineered bacteria on a field is not acceptable to the public. And a protectant made centrally has to survive the journey to the farm.'},
-      {upto: 7, say: 'That is why we created ReLEAF — an on-site biomanufacturing unit to respond to crop stress precisely when and where it is needed.'},
-      {upto: 12, say: 'ReLEAF moves manufacturing to the farm. A local bioreactor removes the transportation costs, optogenetic control produces protein on demand, and a hollow-fibre membrane keeps the bacteria safely contained while the protectant is released.'}
-    ],
+    run: {
+      base: 5,
+      say: 'As temperatures rise, crops fail under the stress — and the protectants that answer it stay in the lab, behind cost, public acceptance and the journey to the farm.',
+      cues: [
+        {reveal: 12, say: 'That is why we created ReLEAF: an on-site biomanufacturing unit that makes the protectant where and when the crop needs it.'}
+      ]
+    },
     script: {
       lead: 'As temperatures rise year by year, crops increasingly fail to respond to the rising climate stress.',
       body: [
@@ -105,12 +119,12 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    beats: [
-      {upto: 0, say: 'With this framework in place, the next step is the circuit that makes on-demand production possible.'},
-      {upto: 2, f: 'modules', say: 'The CcaS/CcaR two-component system is the optogenetic core of the circuit. Its chromophore, PCB, is made from the cell’s own heme by the ho1–pcyA fusion protein and attaches to the sensor kinase CcaS.'},
-      {upto: 2, f: 'modules', say: 'Under red light, CcaS stays inactive and the circuit remains off. When stress is detected, green light is applied, causing CcaS to autophosphorylate and change conformation. CcaS then transfers its phosphate to the response regulator CcaR, which activates the output promoter and initiates transcription of the protectant genes.'},
-      {upto: 6, say: 'Because the output module includes a dropout cassette, the protectant and secretion signal peptide can be swapped without altering this light-controlled core.'}
-    ],
+    run: {
+      say: 'With the framework in place, the next step is the circuit that makes on-demand production possible.',
+      cues: [
+        {focus: 'modules', say: 'Under red light CcaS stays inactive. Green light makes it autophosphorylate and pass its phosphate to CcaR, which switches on the output promoter. The output is a dropout cassette, so the protectant can be swapped without touching the core.'}
+      ]
+    },
     script: {
       lead: 'With this framework in place, the next step is the circuit that makes on-demand production possible.',
       body: [
@@ -153,14 +167,12 @@ const SLIDES = [
       ${F('s3-dnph', 'DNPH assay, ACCD activity under green and red light at 13 and 16 hours', 272, '', 11, 'dnph')}</div>
   </div>
 </div>`,
-    beats: [
-      {upto: 2, say: 'So the next question is light dependence. To test whether our system truly responds to light signals under controlled conditions, we cultured our cells in the light plate apparatus.'},
-      {upto: 3, say: 'Three readouts were taken from the same colony culture.'},
-      {upto: 7, say: 'After LPA exposure, western blots verified and quantified secretion of the protectant. There was more secretion of our protectant under green light.'},
-      {upto: 9, say: 'ELISA showed that ACC deaminase concentrations under green and red light were nearly identical.'},
-      {upto: 11, f: 'dnph', say: 'The DNPH assay, however, showed much higher enzymatic activity under green light by 13 hours, pointing to light-controlled behaviour.'},
-      {upto: 11, say: 'This highlights the success of our circuit.'}
-    ],
+    run: {
+      say: 'Three readouts from the same colony culture. The blot shows more secretion under green light; the ELISA reads green and red as nearly identical.',
+      cues: [
+        {focus: 'dnph', say: 'The DNPH assay shows much higher enzymatic activity under green light by 13 hours, pointing to light-controlled behaviour.'}
+      ]
+    },
     script: {
       lead: 'So the next question is light dependence.',
       body: [
@@ -205,11 +217,12 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    beats: [
-      {upto: 2, say: 'To ensure complete containment of the engineered bacteria, we engineered specialised bioreactor hardware.'},
-      {upto: 2, f: 'schematic', say: 'Culture is pumped from the chamber, passing a flow meter and an inline photometer, and into a hollow-fibre module featuring 0.2 µm pores, 11 fibres and 200 cm² of surface area. The cells remain on the lumen side and return to the chamber, while the protectants are released in the product stream.'},
-      {upto: 8, say: 'Our bioreactor is supported by two self-built inline photometers, both calibrated against a commercial BioDrop.'}
-    ],
+    run: {
+      say: 'To contain the engineered bacteria we built specialised bioreactor hardware, with two self-built inline photometers calibrated against a commercial BioDrop.',
+      cues: [
+        {focus: 'schematic', say: 'Culture is pumped past a flow meter and an inline photometer into a hollow-fibre module: 0.2 µm pores, 11 fibres, 200 cm². Cells stay on the lumen side and the protectant leaves in the product stream.'}
+      ]
+    },
     script: {
       lead: 'To ensure complete containment of the engineered <i class="sp">B. subtilis</i>, we engineered specialised bioreactor hardware.',
       body: [
@@ -256,13 +269,10 @@ const SLIDES = [
     ${F('s5-incubator', 'The reactor running inside the incubator with pumps, bottles and tubing', 600, 'ph', 10)}
   </div>
 </div>`,
-    beats: [
-      {upto: 0, say: 'Three things are confirmed here: the bacteria stay in, the protein gets out, and the run keeps producing.'},
-      {upto: 2, say: 'Containment is a plate test on both sides of the membrane. The lumen side grows a lawn, the shell side is clear.'},
-      {upto: 4, say: 'Secretion is the ELISA on both sides of the same run: 7.7 and 5.7 µg per mL at one hour, tracking together to 40 hours. The protein is crossing while the cells are not.'},
-      {upto: 8, say: 'Production holds across the first 30 hours with no trend, between 2.5 and 8.5 µg per mL. After 30 hours the titre halves, and activity peaks at 18 hours.'},
-      {upto: 10, say: 'All of it, running in the incubator.'}
-    ],
+    run: {
+      say: 'Three things confirmed: the cells stay in, the protein gets out at 7.7 against 5.7 µg per mL across the membrane, and the run holds between 2.5 and 8.5 µg per mL for thirty hours.',
+      cues: []
+    },
     script: {
       lead: 'Three things are confirmed: the bacteria stay in, the protein gets out, and the run keeps producing.',
       body: [
@@ -302,7 +312,7 @@ const SLIDES = [
       ${F('s6-heat-chl', 'Relative chlorophyll content under 37 °C heat, with and without ACCD', 210, '', 4)}
       ${F('s6-heat-root', 'Primary root length box plot under 37 °C heat', 210, '', 5)}
     </div>
-    <p class="pv st" style="--d:6">Mean root length 40.9 against 46.9 mm</p>
+    <p class="pv st" data-hi style="--d:6">Mean root length 40.9 against 46.9 mm</p>
   </div>
 
   <div>
@@ -329,16 +339,15 @@ const SLIDES = [
       ${F('s6-bopep-chl', 'Relative chlorophyll content, 100 mM NaCl, with and without BoPEP4', 210, '', 15)}
       ${F('s6-bopep-fw', 'Fresh weight, 100 mM NaCl, with and without BoPEP4', 210, '', 16)}
     </div>
-    <p class="pv st" style="--d:17">Chlorophyll, p = 0.0002</p>
+    <p class="pv st" data-hi style="--d:17">Chlorophyll, p = 0.0002</p>
   </div>
 </div>`,
-    beats: [
-      {upto: 0, say: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.'},
-      {upto: 6, say: 'Under 37 °C, seedlings given ACC deaminase before the stress keep more chlorophyll and grow longer primary roots, 46.9 against 40.9 mm.'},
-      {upto: 11, say: 'Under 100 mM salt, LEA14 applied after the stress raises chlorophyll, with fresh weight unchanged.'},
-      {upto: 17, say: 'BoPEP4 is the strongest arm on this plate: chlorophyll up 1.85-fold at p equals 0.0002, and fresh weight almost doubled.'},
-      {upto: 17, say: 'That is agar. Soil is the harder test.'}
-    ],
+    run: {
+      say: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.',
+      cues: [
+        {hi: true, say: 'ACC deaminase holds roots at 46.9 against 40.9 mm under heat. BoPEP4 is the strongest arm on the plate: chlorophyll up 1.85-fold at p equals 0.0002.'}
+      ]
+    },
     script: {
       lead: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.',
       body: [
@@ -397,13 +406,10 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    beats: [
-      {upto: 1, say: 'Soil is the harder test, and it separates the two ways of applying the enzyme.'},
-      {upto: 4, say: 'Five days at 300 mM salt, with the enzyme and without it.'},
-      {upto: 5, f: 'saltchart', say: 'The treated pots hold more chlorophyll by day 5, and the difference is significant.'},
-      {upto: 8, say: 'Under five days at 37 °C the ordering matters. Co-treatment, applied with the stress, recovers chlorophyll to the unstressed level.'},
-      {upto: 12, say: 'Post-treatment does not: it sits below the untreated stressed control. The photographs agree, and what these runs separate is timing.'}
-    ],
+    run: {
+      say: 'Soil separates the two ways of applying the enzyme. At 300 mM salt the treated pots hold more chlorophyll; under heat, co-treatment recovers to the unstressed level and post-treatment does not.',
+      cues: []
+    },
     script: {
       lead: 'Soil is the harder test, and it separates the two ways of applying the enzyme.',
       body: [
@@ -438,10 +444,10 @@ const SLIDES = [
     <li class="st" style="--d:5">New red light plate with 670 nm bulbs</li>
   </ol>
 </div>`,
-    beats: [
-      {upto: 0, say: 'Five things have moved since the wiki froze.'},
-      {upto: 5, say: 'The first two go straight at the open question on slide three. Green light goes into the reactor itself, and a new light plate with 670 nm red bulbs gives the red arm a clean wavelength.'}
-    ],
+    run: {
+      say: 'Five things have moved since the wiki froze. The first two go straight at the open question on slide three.',
+      cues: []
+    },
     script: {
       lead: 'Five things have moved since the wiki froze.',
       body: [
@@ -474,11 +480,10 @@ const SLIDES = [
     <img class="r-core st zoom" style="--d:8" src="img/s9-reactor.webp" alt="Bioreactor core with a quick-slot culture cartridge seated on top">
   </div>
 </div>`,
-    beats: [
-      {upto: 0, say: 'The route from this prototype to something a farmer can own.'},
-      {upto: 6, say: 'A quick-slot cartridge removes aseptic handling from the farm. The unit joins the irrigation line so dosing is part of watering. Chromosomal integration retires the plasmid and its antibiotic marker, which is what a regulator will ask for before a pilot field test.'},
-      {upto: 8, say: 'That is the unit it becomes. Thank you.'}
-    ],
+    run: {
+      say: 'A quick-slot cartridge, an irrigation line, quality control, then chromosomal integration before any pilot field test. Thank you.',
+      cues: []
+    },
     script: {
       lead: 'The route from this prototype to something a farmer can own.',
       body: [
