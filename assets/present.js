@@ -46,8 +46,10 @@ function mountDeck(DECK, viewId) {
     dotEls.forEach((d, k) => d.classList.toggle('on', k === cur));
     document.getElementById('ct').textContent =
       String(cur + 1).padStart(2, '0') + ' / ' + String(DECK.length).padStart(2, '0');
+    const handover = cur === 0 || DECK[cur-1].speaker !== DECK[cur].speaker;
     document.getElementById('where').innerHTML =
-      `<b>${DECK[cur].title}</b> &nbsp;·&nbsp; ${DECK[cur].nav}`;
+      `<i class="spk${handover ? ' hand' : ''}">${DECK[cur].speaker}</i>` +
+      `<b>${DECK[cur].title}</b>`;
     document.getElementById('barI').style.width = ((cur + 1) / DECK.length * 100) + '%';
     location.hash = cur + 1;
   }

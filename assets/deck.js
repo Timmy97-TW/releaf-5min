@@ -1,53 +1,42 @@
 /* ReLEAF — 5-minute judging presentation
    ---------------------------------------------------------------------------
-   One slide source, three views:
-     index.html    Script      every slide with what is said over it
-     show.html     Slides      click through at your own pace
-     animate.html  With animation   plays itself, timed to the script
+   One slide source, four views:
+     index.html   Script           every slide with what is said over it
+     show.html    Slides           click through, nothing but the slide
+     notes.html   Slides + script  one slide at a time with its script beside it
+     short.html   Short deck       the same talk in seven slides
 
-   Every slide is authored on a 1600x900 stage; the body box is 1448x652 at
-   (76,190).
+   There is no animated view and no camera. A slide lands whole, in one quiet
+   fade, and slide to slide is a plain cross-fade. If a figure reads too small,
+   crop the figure's own margins — never zoom at it.
 
-   `run` is what the animated view does with a slide, and it is kept deliberately
-   thin. Five rules, in Timmy's words, that an edit must not break:
+   Every slide is authored on a 1600x900 stage. The node strip takes 36-82, the
+   title 102-202, and the body box is 1448x640 at (76,214).
 
-     1. Landing on a slide shows most of its content. Hold something back only
-        when the delay is a key result and means something.
-     2. Never hold back two results.
-     3. At most two animations on a slide, and most slides want none. The agar
-        slide gets a highlight, not a zoom.
-     4. Nobody has time to drive this during a talk, so steps stay few.
+   Each slide carries:
+     n, time, secs   its number, when it should start, and its share of 4:50
+     speaker         who says it. From the 6 Nov script's own Name column:
+                     Chloe 1-3, Jac 4-5, Abigail 6-8, Jac 9-10
+     node, sub       which of the five things the strip should light
+     title, nav      the claim, and a short line for indexes
+     stage           the slide markup
+     script          lead, body, numbers and the "if pressed" note
 
-   Which gives three animations in the whole deck: a camera push on slide 2 and
-   on slide 3, and the highlight on slide 6. Every other slide lands whole and
-   never moves. Nothing anywhere is held back. Slide 4 had a push onto its flow
-   schematic; the fix for a figure too small to read is to crop its margins, not
-   to send the camera at it.
-
-     base    the --d revealed on landing. Omitted means all of it, which is the
-             normal case; a value here is holding content back, so justify it.
-     cues    0 to 2 steps, each {reveal: <--d>} | {focus: <data-f>} | {hi: true}
-
-   Three conventions the view depends on:
-   * `--d` on a `.st` element is its reveal order, counting up from 0 **in the
-     order the speaker reaches it**. It is a stagger delay in the other two
-     views and a reveal threshold here, so it must never go backwards down the
-     page. Items that land together share a number.
-   * `data-f="key"` marks something the camera may move to. Put it on the figure,
-     never on a wrapper with empty space beside it. A target earns a push only
-     if it is worth 1.4x or more; anything full-height cannot zoom at all.
-   * `data-hi` marks a key result the highlight cue lifts in place, without
-     moving anything.
+   One convention the views depend on: `--d` on a `.st` element is its entrance
+   order, counting up from 0 in the order the speaker reaches it. It is the
+   stagger delay, so it must never run backwards down the page, and items that
+   land together share a number.
    --------------------------------------------------------------------------- */
 
-const F = (src, alt, h, cls, d, f) =>
-  `<figure class="fig ${cls || ''} st zoom"${f ? ` data-f="${f}"` : ''} style="height:${h}px;--d:${d || 0}">` +
+const F = (src, alt, h, cls, d) =>
+  `<figure class="fig ${cls || ''} st zoom" style="height:${h}px;--d:${d || 0}">` +
   `<img src="img/${src}.webp" alt="${alt}"></figure>`;
 
 const SLIDES = [
   /* ---------------------------------------------------------- 1 */
   {
     n: 1, time: '0:00', secs: 34,
+    speaker: 'Chloe',
     node: 0,
     title: 'Build the protectant on the farm, not in a factory',
     nav: 'Why manufacture on the farm',
@@ -77,10 +66,6 @@ const SLIDES = [
     <img class="s1-box st zoom" style="--d:12" src="img/s1-reactor.webp" alt="The ReLEAF bioreactor unit, front view">
   </div>
 </div>`,
-    run: {
-      say: 'Crops are failing under climate stress, and the protectants that answer it stay in the lab — behind cost, public acceptance, and the journey to the farm. ReLEAF makes the protectant on the farm, where and when the crop needs it.',
-      cues: []
-    },
     script: {
       lead: 'As temperatures rise year by year, crops increasingly fail to respond to the rising climate stress.',
       body: [
@@ -97,6 +82,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 2 */
   {
     n: 2, time: '0:34', secs: 34,
+    speaker: 'Chloe',
     node: 1,
     title: 'Green light switches the cells on, red light switches them off',
     nav: 'The light-controlled circuit',
@@ -105,7 +91,7 @@ const SLIDES = [
 <div class="s-body s2">
   <div>
     <p class="cap st" style="--d:1">Four modules in <i class="sp">B. subtilis</i></p>
-    ${F('s2-modules', 'Four-module optogenetic circuit: PCB synthesis, light sensing, transcriptional output and protectant output', 490, '', 2, 'modules')}
+    ${F('s2-modules', 'Four-module optogenetic circuit: PCB synthesis, light sensing, transcriptional output and protectant output', 490, '', 2)}
   </div>
   <div class="side">
     <div>
@@ -118,12 +104,6 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    run: {
-      say: 'With the framework in place, the next step is the circuit that makes on-demand production possible.',
-      cues: [
-        {focus: 'modules', say: 'Under red light CcaS stays inactive. Green light makes it autophosphorylate and pass its phosphate to CcaR, which switches on the output promoter. The output is a dropout cassette, so the protectant can be swapped without touching the core.'}
-      ]
-    },
     script: {
       lead: 'With this framework in place, the next step is the circuit that makes on-demand production possible.',
       body: [
@@ -144,6 +124,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 3 */
   {
     n: 3, time: '1:08', secs: 30,
+    speaker: 'Chloe',
     node: 2,
     title: 'Equal ACCD under both lights, but activity only under green at 13 h',
     nav: 'Does the circuit answer to light',
@@ -163,15 +144,9 @@ const SLIDES = [
     <div><p class="cap-s st" style="--d:8">ELISA</p>
       ${F('s3-elisa', 'Anti-His ELISA concentrations, G13 R13 G16 R16', 272, '', 9)}</div>
     <div><p class="cap-s st" style="--d:10">DNPH activity</p>
-      ${F('s3-dnph', 'DNPH assay, ACCD activity under green and red light at 13 and 16 hours', 272, '', 11, 'dnph')}</div>
+      ${F('s3-dnph', 'DNPH assay, ACCD activity under green and red light at 13 and 16 hours', 272, '', 11)}</div>
   </div>
 </div>`,
-    run: {
-      say: 'Three readouts from the same colony culture. The blot shows more secretion under green light, and the ELISA reads the two almost the same, 6.3 against 5.7 micrograms per millilitre.',
-      cues: [
-        {focus: 'dnph', say: 'The activity assay does not agree with that. At 13 hours green reads 7.2 against red at 0.8 — the same amount of enzyme, doing far more work under green light.'}
-      ]
-    },
     script: {
       lead: 'So the next question is light dependence.',
       body: [
@@ -196,6 +171,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 4 */
   {
     n: 4, time: '1:38', secs: 30,
+    speaker: 'Jac',
     node: 3,
     title: 'A 0.2 µm hollow-fibre membrane keeps the cells in and lets the protectant out',
     nav: 'The hardware that contains it',
@@ -217,10 +193,6 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    run: {
-      say: 'To contain the engineered bacteria we built specialised bioreactor hardware. Culture is pumped into a hollow-fibre module — 0.2 µm pores, 11 fibres, 200 cm² — so the cells stay on the lumen side while the protectant leaves in the product stream. Both inline photometers are calibrated against a commercial BioDrop.',
-      cues: []
-    },
     script: {
       lead: 'To ensure complete containment of the engineered <i class="sp">B. subtilis</i>, we engineered specialised bioreactor hardware.',
       body: [
@@ -242,6 +214,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 5 */
   {
     n: 5, time: '2:08', secs: 34,
+    speaker: 'Jac',
     node: 4,
     title: 'Nothing grew from the shell side, but the protectant crossed it',
     nav: 'Containment, secretion, 72 hours of run',
@@ -267,10 +240,6 @@ const SLIDES = [
     ${F('s5-incubator', 'The reactor running inside the incubator with pumps, bottles and tubing', 600, 'ph', 10)}
   </div>
 </div>`,
-    run: {
-      say: 'Three things confirmed: the cells stay in, the protein gets out at 7.8 inside against 5.9 outside, and across 72 hours production holds between 2.5 and 6.5 micrograms per millilitre with activity jumping at 18 hours.',
-      cues: []
-    },
     script: {
       lead: 'Three things are confirmed: the bacteria stay in, the protein gets out, and the run keeps producing.',
       body: [
@@ -294,6 +263,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 6 */
   {
     n: 6, time: '2:42', secs: 28,
+    speaker: 'Abigail',
     node: 5,
     sub: 'agar',
     title: 'ACCD raised chlorophyll 40% under heat; LEA14 and BoPEP4 under salt',
@@ -312,7 +282,7 @@ const SLIDES = [
       ${F('s6-heat-chl', 'Relative chlorophyll content under 37 °C heat, with and without ACCD', 210, '', 4)}
       ${F('s6-heat-root', 'Primary root length box plot under 37 °C heat', 210, '', 5)}
     </div>
-    <p class="pv st" data-hi style="--d:6">Chlorophyll 1.00 &rarr; 1.40, roots 40.9 &rarr; 46.9 mm</p>
+    <p class="pv st" style="--d:6">Chlorophyll 1.00 &rarr; 1.40, roots 40.9 &rarr; 46.9 mm</p>
   </div>
 
   <div>
@@ -339,15 +309,9 @@ const SLIDES = [
       ${F('s6-bopep-chl', 'Relative chlorophyll content, 100 mM NaCl, with and without BoPEP4', 210, '', 15)}
       ${F('s6-bopep-fw', 'Fresh weight, 100 mM NaCl, with and without BoPEP4', 210, '', 16)}
     </div>
-    <p class="pv st" data-hi style="--d:17">Chlorophyll 0.99 &rarr; 1.84</p>
+    <p class="pv st" style="--d:17">Chlorophyll 0.99 &rarr; 1.84</p>
   </div>
 </div>`,
-    run: {
-      say: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.',
-      cues: [
-        {hi: true, say: 'ACC deaminase takes chlorophyll from 1.00 to 1.40 under heat, a forty per cent rise, and holds roots at 46.9 against 40.9 mm. BoPEP4 is the strongest arm on the plate, nearly doubling chlorophyll under salt.'}
-      ]
-    },
     script: {
       lead: 'Three protectants, two stresses, the same readouts: chlorophyll, fresh weight and root length.',
       body: [
@@ -370,6 +334,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 7 */
   {
     n: 7, time: '3:10', secs: 24,
+    speaker: 'Abigail',
     node: 5,
     sub: 'soil',
     title: 'Treating with the heat restored chlorophyll; treating after did not',
@@ -409,10 +374,6 @@ const SLIDES = [
     </div>
   </div>
 </div>`,
-    run: {
-      say: 'Soil separates the two ways of applying the enzyme. At 300 mM salt the treated pots gain 16 per cent. Under heat, treating alongside the stress brings chlorophyll from 0.83 back to the unstressed 1.00; treating afterwards falls to 0.48, below the untreated control.',
-      cues: []
-    },
     script: {
       lead: 'Soil is the harder test, and it separates the two ways of applying the enzyme.',
       body: [
@@ -434,6 +395,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 8 */
   {
     n: 8, time: '3:34', secs: 24,
+    speaker: 'Abigail',
     node: 5,
     sub: 'hydroponics',
     title: 'In hydroponics ACCD more than doubled chlorophyll under salt',
@@ -452,14 +414,10 @@ const SLIDES = [
     <div class="hd st" style="--d:5"><h3>100 mM NaCl</h3>
       <p>The same dilution, salt against an unsalted reference</p></div>
     <div>${F('s8-salt-trays', 'Hydroponic rafts in the control condition and in 100 mM NaCl', 232, 'ph', 6)}</div>
-    ${F('s8-salt-chlorophyll', 'Relative chlorophyll content at 0 and 100 mM NaCl for the plasmid-free control and ACCD', 256, '', 7, 'salt')}
+    ${F('s8-salt-chlorophyll', 'Relative chlorophyll content at 0 and 100 mM NaCl for the plasmid-free control and ACCD', 256, '', 7)}
     <p class="open st" style="--d:8">At 100 mM, 2.23 against 0.99. Unsalted ACCD sits at 0.82, below its own control, and we cannot yet explain it.</p>
   </div>
 </div>`,
-    run: {
-      say: 'The third system is hydroponics, at the same 1 to 40 dilution. Under heat ACCD holds chlorophyll at 1.28 against 1.00. Under 100 mM salt it reaches 2.23 against 0.99 — more than double. The unsalted ACCD arm sits below its own control, and we do not yet know why.',
-      cues: []
-    },
     script: {
       lead: 'Finally, we tested the protectants in the hydroponic system.',
       body: [
@@ -480,6 +438,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 9 */
   {
     n: 9, time: '3:58', secs: 24,
+    speaker: 'Jac',
     node: 0,
     title: 'Since the freeze, green light runs inside the reactor',
     nav: 'What has moved since the freeze',
@@ -489,7 +448,7 @@ const SLIDES = [
   <div class="col">
     <div class="hd st" style="--d:1"><h3>Green light, in the chamber</h3>
       <p>Illumination moved from the plate onto the reactor itself</p></div>
-    <div class="grow">${F('s9f-rig', 'The bioreactor rig rebuilt with green light fed into the culture chamber', 500, 'ph', 2)}</div>
+    <div class="grow">${F('s9f-rig', 'The bioreactor on the bench with green LED strips lit inside the closed case, the control monitor above it', 500, 'ph', 2)}</div>
   </div>
   <div class="col">
     <div class="hd st" style="--d:3"><h3>Level 2 light plate, 2 to 16 h</h3>
@@ -510,10 +469,6 @@ const SLIDES = [
     <span>A smaller assay format, so a protectant can be screened without a full plate run.</span>
   </div>
 </div>`,
-    run: {
-      say: 'Since the freeze the green light moved inside the reactor, the light plate ran a full time course from two to sixteen hours against a rebuilt 660 nm red plate, and both protectants went back onto trays. Droplet testing is running alongside.',
-      cues: []
-    },
     script: {
       lead: 'Since the wiki freeze, we have kept pushing the project forward.',
       body: [
@@ -529,6 +484,7 @@ const SLIDES = [
   /* ---------------------------------------------------------- 10 */
   {
     n: 10, time: '4:22', secs: 28,
+    speaker: 'Jac',
     node: 0,
     title: 'Make it swappable, make it checkable, then put it in a field',
     nav: 'Where this goes next',
@@ -557,10 +513,6 @@ const SLIDES = [
     <img class="r-core st zoom" style="--d:5" src="img/s10-reactor-cartridge.webp" alt="The bioreactor opened, with a quick-slot culture cartridge seated on top">
   </div>
 </div>`,
-    run: {
-      say: 'Three things turn this prototype into something a farmer could own. A cartridge they slot in and an irrigation line they already have. Fluorescence that reports what the cells made. And the circuit moved into the chromosome, because a field reactor cannot carry antibiotics. Then regulatory approval, then a pilot field test. Thank you.',
-      cues: []
-    },
     script: {
       lead: 'Our next step is making ReLEAF practical for farmers.',
       body: [
@@ -593,7 +545,7 @@ if (typeof module !== 'undefined') module.exports = SLIDES;
    The progress rail is one segment per slide, each as wide as that slide's
    share of the planned running time, so it says both "which slide" and "how
    much talk is left". `by 2:30` is the clock reading the speaker should see on
-   landing here; show.html and animate.html paint a live caret against it.
+   landing here; the two slideshow views paint a live caret against it.
    =========================================================================== */
 
 const NODES = [

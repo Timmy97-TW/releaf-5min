@@ -1,12 +1,12 @@
-/* The three views, named once. Every page draws its switcher from this list,
+/* The four views, named once. Every page draws its switcher from this list,
    so a rename happens here and nowhere else. */
 const VIEWS = [
   {id: 'script',  href: 'index.html',   label: 'Script',
    blurb: 'Every slide with what is said over it, the numbers behind it and the answer if a judge presses.'},
   {id: 'slides',  href: 'show.html',    label: 'Slides',
    blurb: 'The ten slides, whole, one click at a time. This is the view to present from.'},
-  {id: 'animate', href: 'animate.html', label: 'With animation',
-   blurb: 'Plays itself against the five-minute clock. Each figure arrives as the script reaches it.'},
+  {id: 'notes',   href: 'notes.html',   label: 'Slides + script',
+   blurb: 'One slide at a time with its script beside it, and who says it. The view to rehearse from.'},
   {id: 'short',   href: 'short.html',   label: 'Short deck',
    blurb: 'The same five minutes in seven slides: the bioreactor on one, all three plant systems on another.'}
 ];

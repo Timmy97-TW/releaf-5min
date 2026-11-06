@@ -26,6 +26,7 @@ const SLIDES_SHORT = [
   /* ---------------------------------------------------------- 4 */
   {
     n: 4, time: '1:50', secs: 54,
+    speaker: 'Jac',
     node: [3, 4],
     sub: 'build and run',
     title: 'No cells crossed the 0.2 µm membrane, and the protectant kept coming for 72 hours',
@@ -85,6 +86,7 @@ const SLIDES_SHORT = [
   /* ---------------------------------------------------------- 5 */
   {
     n: 5, time: '2:44', secs: 58,
+    speaker: 'Abigail',
     node: 5,
     sub: 'three systems',
     title: 'ACCD raised chlorophyll in all three systems, and timing decided how much',

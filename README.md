@@ -6,10 +6,14 @@ The GEMS Taiwan 2026 five-minute judging deck, rebuilt as a web page. Four views
   the numbers behind it, and the answer to hold if a judge presses.
 - **[Slides](https://timmy97-tw.github.io/releaf-5min/show.html)** — the ten slides, whole, one
   click at a time. This is the view to present from.
-- **[With animation](https://timmy97-tw.github.io/releaf-5min/animate.html)** — plays itself
-  against the clock, each figure arriving as the script reaches it.
+- **[Slides + script](https://timmy97-tw.github.io/releaf-5min/notes.html)** — one slide at a time
+  with its script beside it and who says it. This is the view to rehearse from.
 - **[Short deck](https://timmy97-tw.github.io/releaf-5min/short.html)** — the same five minutes in
   seven slides: the bioreactor on one slide, all three plant systems on another.
+
+There is no animated view and no camera moves. A slide lands whole in one quiet fade, and slide to
+slide is a plain cross-fade. If a figure reads too small, crop the figure's own margins rather
+than zooming at it.
 
 ## The titles say the finding
 
@@ -33,6 +37,23 @@ speaker cannot drift from what the audience can see.
 | 8 | In hydroponics, ACCD more than doubled chlorophyll under salt | 3:34 |
 | 9 | Since the freeze, green light runs inside the reactor | 3:58 |
 | 10 | Make it swappable, make it checkable, then put it in a field | 4:22 |
+
+## Who says what
+
+Taken from the 6 Nov script's own Name column, and carried on every slide's data so the views
+cannot disagree about it:
+
+| Slides | Speaker |
+| --- | --- |
+| 1–3 | Chloe |
+| 4–5 | Jac |
+| 6–8 | Abigail |
+| 9–10 | Jac |
+
+Three handovers. The contents index rules a line at each one and marks it **takes over**; the
+Slides view puts the speaker in a chip beside the title, filled olive on a handover slide; the
+Slides + script view names the speaker above the script and heads it "Chloe says". The speaker is
+deliberately **not** printed on the slide itself — that is for the team, not the judges.
 
 ## The node strip
 
@@ -66,46 +87,19 @@ only thing worth knowing mid-sentence.
 **Slides / Short deck** — `→ ↓ space` next, `← ↑` back, `1`–`9` and `0` for ten jump, `f` full
 screen, `t` start or reset the clock, `Esc` back to the script. `show.html#4` opens at slide 4.
 
-**With animation** — `→` forward, `←` back, `space` play or pause, `r` restart, `c` hide the
-spoken line, `f` full screen. Forward means the next slide, unless that slide still has an
-animation waiting, in which case it fires that first. It starts playing on its own and any arrow
-key pauses it.
+**Slides + script** — the same keys, minus full screen. The clock starts on the first advance and
+the pace caret runs on the slide's own rail, so you can rehearse against 4:50 while reading the
+script. `notes.html#4` opens at slide 4.
 
-## How the animation is built
+## Entrances
 
-Five rules, Timmy's, 28 Oct:
+A slide lands in one fade with a short stagger and nothing else. `--d` on a `.st` element is its
+entrance order, counting from 0 in the order the speaker reaches it; it is the stagger delay, so
+it must never run backwards down the page, and items that land together share a number.
 
-1. Landing on a slide shows most of its content. Hold something back only when the
-   delay is a key result and it means something.
-2. Never hold back two results.
-3. At most two animations on a slide, and most slides want none. The agar slide
-   gets a highlight, not a zoom.
-4. Nobody has time to drive this during a talk, so steps stay few.
-
-Which comes to **three animations in the whole deck**: a camera push on slides 2 and 3, and the
-highlight on slide 6. Every other slide lands whole and never moves; nothing anywhere is held
-back.
-
-Each slide carries a `run` block in `assets/deck.js`: `cues` is zero to two steps, each
-`{reveal}`, `{focus}` or `{hi: true}`. There is also a `base`, the `--d` to reveal on landing —
-no slide uses it, and a value there means content is being held back, so it needs a reason. A
-slide lands in one quiet fade with no stagger and no movement, and slide to slide is a plain
-cross-fade.
-
-Slide 4 had a push onto its flow schematic, because the diagram read small. The answer there was
+Slide 4's flow schematic used to get a camera push because the diagram read small. The answer was
 to crop the figure's own margins — the export carried 425 px of white down its right edge — so it
-renders about 40 % wider in the same frame and needs no camera at all. Reach for that before a
-zoom.
-
-Three conventions to keep:
-
-- `--d` on a `.st` element is its reveal order, counting from 0 **in the order the speaker
-  reaches it**. It doubles as the stagger delay in the other views, so it must never run
-  backwards down the page. Items that land together share a number.
-- `data-f="key"` marks something the camera may move to. Put it on the figure, not on a wrapper —
-  a wrapper with empty space beside the figure frames the empty space. A target earns a push only
-  if it is worth 1.4x or more; anything full-height cannot zoom at all.
-- `data-hi` marks a key result the highlight lifts in place, without moving it.
+renders about 40 % wider in the same frame. Reach for that, not for a zoom.
 
 ## Numbers
 
@@ -129,11 +123,11 @@ No build step and no external requests.
 ```
 index.html           the script page, with the contents index
 show.html            the ten-slide show
+notes.html           one slide at a time with its script beside it
 short.html           the seven-slide show
-animate.html         the animated run
-assets/deck.js       slide markup, speaking script, numbers, beats, and the node strip
+assets/deck.js       slide markup, speaker, speaking script, numbers, and the node strip
 assets/deck-short.js the two merged slides; the other five reference the long deck
-assets/present.js    the presenting view, shared by show.html and short.html
+assets/present.js    the slideshow, shared by show.html and short.html
 assets/deck.css      the 1600x900 stage and every slide layout
 assets/nav.js        the four view names, in one place
 img/                 figures exported from the team deck
