@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReLEAF · Slides + script</title>
 <meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, one slide at a time with its speaking script and who says it.">
-<link rel="stylesheet" href="assets/deck.css?v=13">
+<link rel="stylesheet" href="assets/deck.css?v=14">
 <style>
 html,body{height:100%;overflow:hidden;background:#f2f2ef}
 .lay{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,1fr) 430px}
@@ -50,6 +50,7 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
 .topbar{position:fixed;left:0;top:0;height:54px;display:flex;align-items:center;
   gap:16px;padding:0 24px;z-index:20;right:430px}
 .topbar .vsw{margin-left:auto}
+.topbar #src{margin-left:14px}
 .hud{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:21;
   display:flex;align-items:center;gap:12px;padding:7px 9px 7px 15px;border-radius:980px;
   background:rgba(255,255,255,.88);border:1px solid var(--line-2);
@@ -77,7 +78,7 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
   <div class="right" id="right"></div>
 </div>
 
-<div class="topbar"><div id="vsw"></div></div>
+<div class="topbar"><div id="vsw"></div><div id="src"></div></div>
 <div class="hud">
   <span class="ct" id="ct">01 / 10</span>
   <span class="tm" id="tm">0:00</span>
@@ -85,10 +86,11 @@ html,body{height:100%;overflow:hidden;background:#f2f2ef}
   <button id="next" title="Next">&#8250;</button>
 </div>
 
-<script src="assets/nav.js?v=13"></script>
-<script src="assets/deck.js?v=13"></script>
+<script src="assets/nav.js?v=14"></script>
+<script src="assets/deck.js?v=14"></script>
 <script>
 document.getElementById('vsw').innerHTML = viewSwitcher('notes');
+document.getElementById('src').innerHTML = sourceLinks();
 
 const frame = document.getElementById('frame');
 const right = document.getElementById('right');

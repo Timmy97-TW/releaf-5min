@@ -9,6 +9,8 @@
 */
 function mountDeck(DECK, viewId) {
   document.getElementById('vsw').innerHTML = viewSwitcher(viewId);
+  const srcSlot = document.getElementById('src');
+  if (srcSlot) srcSlot.innerHTML = sourceLinks();
 
   const frame = document.getElementById('frame');
   frame.innerHTML = DECK.map((s, i) =>

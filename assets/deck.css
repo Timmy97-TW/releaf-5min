@@ -281,3 +281,20 @@ i.sp{font-style:italic}
 .spl .pv{font-size:17px;font-weight:650;color:var(--green);margin:13px 0 0;line-height:1.3}
 .spl .open{font-size:15px;line-height:1.34;color:var(--ink-2);margin:9px 0 0;
   border-left:2px solid var(--line);padding-left:10px}
+
+/* ============================================================
+   SOURCE LINKS — out to the Canva deck and the script doc
+   ============================================================ */
+.src{display:flex;align-items:center;gap:6px}
+.src a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;
+  font-size:13px;font-weight:600;letter-spacing:-.005em;color:var(--ink-2);
+  padding:6px 12px;border-radius:980px;border:1px solid var(--line);
+  transition:color .2s var(--ease),background .2s var(--ease),border-color .2s var(--ease)}
+.src a:hover{color:var(--ink);background:var(--bg-2);border-color:rgba(29,29,27,.18)}
+.src a i{font-style:normal;font-size:11px;line-height:1;color:var(--ink-3)}
+.src a:hover i{color:var(--olive)}
+.src.on-dark a{color:rgba(255,255,255,.72);border-color:rgba(255,255,255,.18)}
+.src.on-dark a:hover{color:#fff;background:rgba(255,255,255,.1)}
+@media (max-width:860px){
+  .src a{padding:5px 9px;font-size:12px}
+}

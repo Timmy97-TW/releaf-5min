@@ -11,6 +11,14 @@ The GEMS Taiwan 2026 five-minute judging deck, rebuilt as a web page. Four views
 - **[Short deck](https://timmy97-tw.github.io/releaf-5min/short.html)** — the same five minutes in
   seven slides: the bioreactor on one slide, all three plant systems on another.
 
+Both originals are linked from the right of the top bar on every page, from **The originals** on
+the home page, and from the footer:
+the [Canva deck](https://www.canva.com/design/DAHY4r-W8bo/mDhTtt1rfbU4dYojBM1x4g/edit) and the
+[script doc](https://docs.google.com/document/d/177lxIp4KvbF6ruB3DkdfH3BUx79MHEJS33VinNvWumg/edit?tab=t.0).
+They live in `SOURCES` in `assets/nav.js`, next to the view names, so a changed link is changed
+once. Both are **edit** links on a public site: anyone who finds this page can open them, so move
+them to view-only sharing if that is not what you want.
+
 There is no animated view and no camera moves. A slide lands whole in one quiet fade, and slide to
 slide is a plain cross-fade. If a figure reads too small, crop the figure's own margins rather
 than zooming at it.
@@ -129,7 +137,7 @@ assets/deck.js       slide markup, speaker, speaking script, numbers, and the no
 assets/deck-short.js the two merged slides; the other five reference the long deck
 assets/present.js    the slideshow, shared by show.html and short.html
 assets/deck.css      the 1600x900 stage and every slide layout
-assets/nav.js        the four view names, in one place
+assets/nav.js        the four view names and the two source links, in one place
 img/                 figures exported from the team deck
 ```
 

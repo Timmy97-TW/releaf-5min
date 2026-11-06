@@ -16,3 +16,22 @@ function viewSwitcher(current, dark) {
     VIEWS.map(v => `<a href="${v.href}"${v.id === current ? ' aria-current="page"' : ''}>${v.label}</a>`).join('') +
     `</nav>`;
 }
+
+/* The two originals this site is built from, named once like the views.
+   They are the team's working documents, so they open in a new tab and this
+   site never tries to read them. */
+const SOURCES = [
+  {id: 'canva', label: 'Canva deck',
+   href: 'https://www.canva.com/design/DAHY4r-W8bo/mDhTtt1rfbU4dYojBM1x4g/edit',
+   blurb: 'The slides themselves, where the team edits them.'},
+  {id: 'doc', label: 'Script doc',
+   href: 'https://docs.google.com/document/d/177lxIp4KvbF6ruB3DkdfH3BUx79MHEJS33VinNvWumg/edit?tab=t.0',
+   blurb: 'The speaking script, with its per-slide timings and the Name column.'}
+];
+
+function sourceLinks(dark) {
+  return `<nav class="src${dark ? ' on-dark' : ''}" aria-label="The originals">` +
+    SOURCES.map(s =>
+      `<a href="${s.href}" target="_blank" rel="noopener noreferrer">${s.label}<i aria-hidden="true">&#8599;</i></a>`
+    ).join('') + `</nav>`;
+}
