@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReLEAF · With animation</title>
 <meta name="description" content="The GEMS Taiwan ReLEAF five-minute judging presentation, played against the script.">
-<link rel="stylesheet" href="assets/deck.css?v=5">
+<link rel="stylesheet" href="assets/deck.css?v=11">
 <style>
 html,body{height:100%;overflow:hidden;background:#f2f2ef}
 
@@ -106,7 +106,7 @@ body.nocap .cap-line{display:none}
   <button class="play" id="play" title="Play / pause">&#9654;</button>
   <button class="sm" id="prev" title="Back">&#8249;</button>
   <button class="sm" id="next" title="Forward">&#8250;</button>
-  <span class="ct" id="ct">01 / 09</span>
+  <span class="ct" id="ct">01 / 10</span>
   <span class="tm" id="tm">0:00 / 5:00</span>
   <button class="sm" id="full" title="Full screen">&#9633;</button>
 </div>
@@ -119,18 +119,18 @@ body.nocap .cap-line{display:none}
 
 <div class="bar"><i id="barI"></i></div>
 
-<script src="assets/nav.js?v=5"></script>
-<script src="assets/deck.js?v=5"></script>
+<script src="assets/nav.js?v=11"></script>
+<script src="assets/deck.js?v=11"></script>
 <script>
 document.getElementById('vsw').innerHTML = viewSwitcher('animate', false);
 
 /* ------------------------------------------------------------------
    Build. A step is either landing on a slide or firing one of its cues,
-   so a nine-slide run with five cues is fourteen presses, not forty.
+   so a ten-slide run with a few cues is a dozen presses, not forty.
    ------------------------------------------------------------------ */
 const frame = document.getElementById('frame');
 frame.innerHTML = SLIDES.map((s,i) =>
-  `<div class="slide" data-i="${i}"><div class="cam"><div class="stage">${s.stage}</div></div></div>`
+  `<div class="slide" data-i="${i}"><div class="cam"><div class="stage">${stageHTML(SLIDES,i)}</div></div></div>`
 ).join('');
 
 const slideEls = [...frame.querySelectorAll('.slide')];
@@ -332,7 +332,7 @@ addEventListener('keydown', e => {
   if (e.key === ' ')            { e.preventDefault(); toggle(); }
   else if (['ArrowRight','ArrowDown','PageDown','Enter'].includes(e.key)) { e.preventDefault(); step(1); }
   else if (['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key))  { e.preventDefault(); step(-1); }
-  else if (/^[1-9]$/.test(e.key)) gotoSlide(+e.key - 1);
+  else if (/^[0-9]$/.test(e.key)) gotoSlide(e.key === '0' ? 9 : +e.key - 1);
   else if (e.key === 'r') restart();
   else if (e.key === 'f') toggleFull();
   else if (e.key === 'c') { document.body.classList.toggle('nocap'); fit(); }

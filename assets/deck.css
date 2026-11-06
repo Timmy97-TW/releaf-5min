@@ -44,8 +44,10 @@ a{color:inherit}
 .s-title{font-size:64px;font-weight:800;letter-spacing:-.025em;line-height:1;
   margin:0;color:var(--ink)}
 .s-title em{font-style:normal;color:var(--olive)}
-.s-head{position:absolute;left:76px;top:56px;right:76px}
-.s-body{position:absolute;left:76px;right:76px;top:190px;bottom:58px;min-height:0}
+/* the node strip takes the top of the stage, so the head and body sit lower;
+   the body keeps its height to within a dozen pixels of the old layout */
+.s-head{position:absolute;left:76px;top:102px;right:76px}
+.s-body{position:absolute;left:76px;right:76px;top:214px;bottom:46px;min-height:0}
 .s-note{font-size:19px;line-height:1.35;color:var(--ink-2);margin:0}
 .cap{font-size:19px;font-weight:650;color:var(--ink);margin:0 0 8px;letter-spacing:-.01em}
 .cap-s{font-size:17px;font-weight:600;color:var(--ink-2);margin:0 0 6px}
@@ -59,7 +61,7 @@ a{color:inherit}
 i.sp{font-style:italic}
 
 /* ---------- Slide 1 ---------- */
-.s1{position:absolute;inset:0;display:grid;grid-template-columns:600px minmax(0,1fr)}
+.s1{position:absolute;inset:96px 0 0 0;display:grid;grid-template-columns:600px minmax(0,1fr)}
 .s1-left{position:relative;overflow:hidden;background:#241a12}
 .s1-left>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transform:scale(1.06);transition:transform 9s linear}
@@ -126,27 +128,42 @@ i.sp{font-style:italic}
   border-top:2px solid var(--ink);padding-top:8px;margin:18px 0 0}
 .s7 .trio{display:grid;grid-template-columns:254px 254px 254px;gap:14px;margin-top:14px}
 
-/* ---------- Slide 8 ---------- */
-.s8-list{list-style:none;margin:0;padding:0;counter-reset:n;display:grid;gap:26px;max-width:1180px}
-.s8-list li{counter-increment:n;position:relative;padding-left:76px;font-size:33px;
-  font-weight:600;letter-spacing:-.015em;line-height:1.24}
-.s8-list li:before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:7px;
-  font-size:20px;font-weight:700;color:var(--olive);letter-spacing:.06em}
-.s8-list span{display:block;font-size:20px;font-weight:450;color:var(--ink-2);margin-top:6px;
-  letter-spacing:0}
+/* ---------- Slide 8 · hydroponics ---------- */
+.s8{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:46px}
+.s8 .hd{border-top:3px solid var(--ink);padding-top:9px;margin-bottom:13px;height:52px}
+.s8 .hd h3{margin:0;font-size:22px;font-weight:750;letter-spacing:-.015em}
+.s8 .hd p{margin:3px 0 0;font-size:15px;color:var(--ink-2)}
+.s8 .col{display:grid;grid-template-rows:auto 232px minmax(0,1fr) auto;gap:14px}
+.s8 .pv{font-size:16px;font-weight:650;color:var(--green);margin:0}
+.s8 .open{font-size:15.5px;line-height:1.35;color:var(--ink-2);margin:0;
+  border-left:2px solid var(--line);padding-left:11px}
 
-/* ---------- Slide 9 ---------- */
-.s9{display:grid;grid-template-columns:880px 520px;gap:48px}
-.s9-list{list-style:none;margin:0;padding:0;counter-reset:n;display:grid;gap:22px;align-content:center}
-.s9-list li{counter-increment:n;position:relative;padding-left:66px;font-size:33px;
-  font-weight:650;letter-spacing:-.015em;line-height:1.2}
-.s9-list li:before{content:counter(n);position:absolute;left:0;top:1px;width:42px;height:42px;
-  border-radius:50%;background:var(--bg-2);color:var(--green);font-size:19px;font-weight:700;
-  display:grid;place-items:center}
-.s9-list span{display:block;font-size:19px;font-weight:450;color:var(--ink-2);margin-top:4px}
-.s9 .renders{position:relative}
-.s9 .r-unit{position:absolute;right:12px;top:0;width:188px}
-.s9 .r-core{position:absolute;right:36px;bottom:0;width:368px}
+/* ---------- Slide 9 · since the wiki freeze ---------- */
+.s9f{display:grid;grid-template-columns:396px minmax(0,1fr) 430px;gap:38px;padding-bottom:60px}
+.s9f .col{display:flex;flex-direction:column;min-height:0}
+.s9f .hd{border-top:3px solid var(--ink);padding-top:9px;margin-bottom:14px}
+.s9f .hd h3{margin:0;font-size:21px;font-weight:750;letter-spacing:-.015em}
+.s9f .hd p{margin:3px 0 0;font-size:15px;line-height:1.3;color:var(--ink-2)}
+.s9f .grow{flex:1;min-height:0}
+.s9f .stack{display:grid;grid-template-rows:1fr 1fr;gap:12px;flex:1;min-height:0}
+.s9f .foot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;
+  gap:12px;border-top:1px solid var(--line);padding-top:11px}
+.s9f .foot b{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.s9f .foot span{font-size:16px;color:var(--ink-2)}
+.s9f .tag{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--olive);background:rgba(133,138,62,.11);padding:4px 9px;border-radius:5px}
+
+/* ---------- Slide 10 · future work ---------- */
+.s10{display:grid;grid-template-columns:minmax(0,1fr) 404px;gap:50px}
+.s10 .steps{display:grid;gap:20px;align-content:center}
+.s10 .step{display:grid;grid-template-columns:52px minmax(0,1fr);gap:19px;align-items:start}
+.s10 .step .k{width:52px;height:52px;border-radius:13px;background:var(--bg-2);
+  color:var(--green);font-size:20px;font-weight:750;display:grid;place-items:center}
+.s10 .step h3{margin:1px 0 0;font-size:28px;font-weight:700;letter-spacing:-.018em;line-height:1.18}
+.s10 .step p{margin:5px 0 0;font-size:18.5px;line-height:1.36;color:var(--ink-2)}
+.s10 .renders{position:relative}
+.s10 .r-unit{position:absolute;right:4px;top:6px;width:186px}
+.s10 .r-core{position:absolute;left:0;bottom:10px;width:338px}
 
 /* ============================================================
    VIEW SWITCHER — the same three names on every page
@@ -167,3 +184,100 @@ i.sp{font-style:italic}
 @media (max-width:720px){
   .vsw a{padding:6px 10px;font-size:12.5px}
 }
+
+/* ============================================================
+   NODE STRIP — the five things, always on screen
+   ------------------------------------------------------------
+   Lives inside the 1600x900 stage, not in the browser chrome, so
+   it is part of every slide in all three views. It replaces the
+   per-slide kicker: the strip is what says where you are.
+
+   Stage geometry it assumes:
+     .nodebar  36 -  82     the strip
+     .s-head  102 - 202     the title (a sentence, up to two lines)
+     .s-body  214 - 854     the slide
+   ============================================================ */
+.nodebar{position:absolute;left:76px;right:76px;top:36px;height:46px;
+  display:flex;align-items:center;gap:30px}
+
+.nodes{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:0;flex:1}
+.nd{position:relative;display:flex;align-items:center;gap:9px;padding:0 15px 0 0;margin-right:15px}
+.nd:after{content:"";position:absolute;right:0;top:50%;width:14px;height:2px;
+  background:var(--line);transform:translateY(-50%)}
+.nd:last-child{padding-right:0;margin-right:0}
+.nd:last-child:after{display:none}
+.nd.done:after{background:var(--olive);opacity:.45}
+
+.ndi{position:relative;width:38px;height:38px;border-radius:10px;overflow:hidden;
+  background:var(--bg-2);flex:none;
+  box-shadow:inset 0 0 0 1px var(--line);
+  transition:box-shadow .3s var(--ease),filter .3s var(--ease),opacity .3s var(--ease)}
+.ndi img{width:100%;height:100%;object-fit:cover}
+
+.ndl{font-size:16px;font-weight:600;letter-spacing:-.01em;color:var(--ink-3);
+  white-space:nowrap;transition:color .3s var(--ease)}
+.ndl em{display:block;font-style:normal;font-size:13px;font-weight:600;
+  color:var(--olive);letter-spacing:.01em;margin-top:1px}
+
+/* upcoming — recognisable, but out of the way */
+.nd .ndi{filter:saturate(.15) contrast(.92);opacity:.42}
+/* already said */
+.nd.done .ndi{filter:saturate(.5);opacity:.6}
+.nd.done .ndl{color:var(--ink-3)}
+/* where we are */
+.nd.now .ndi{filter:none;opacity:1;box-shadow:inset 0 0 0 1px var(--line),0 0 0 2.5px var(--olive)}
+.nd.now .ndl{color:var(--ink);font-weight:700}
+
+/* a node that owns two adjacent slides keeps one bracket across both */
+.nd.now.span:after{background:var(--olive);opacity:1;height:2.5px}
+
+/* ---- progress: one segment per slide, width = its share of the talk ---- */
+.prog{display:flex;align-items:center;gap:12px;flex:none}
+.pr{display:flex;align-items:center;gap:3px;width:232px}
+.pr i{display:block;height:4px;border-radius:2px;background:rgba(29,29,27,.13);
+  transition:background .3s var(--ease)}
+.pr i.past{background:var(--olive);opacity:.38}
+.pr i.at{background:var(--olive);opacity:1}
+.pt{font-size:14px;font-weight:650;color:var(--ink-3);white-space:nowrap;
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.pt b{color:var(--ink-2);font-weight:650}
+
+/* the live clock caret, painted by show.html / animate.html only */
+.pr{position:relative}
+.pr .caret{position:absolute;top:-4px;width:2px;height:12px;border-radius:1px;
+  background:var(--ink);opacity:0;transition:left .5s linear,opacity .3s var(--ease),background .3s}
+.pr .caret.on{opacity:.55}
+.pr .caret.late{background:#a33;opacity:1}
+
+/* the title is now a sentence, so it sets smaller and may run to two lines */
+.s-claim{font-size:45px;font-weight:750;letter-spacing:-.025em;line-height:1.08;
+  margin:0;color:var(--ink);max-width:1330px}
+.s-claim em{font-style:normal;color:var(--olive-d)}
+.s-claim b{font-weight:800;color:var(--olive-d)}
+.s-claim i.sp{font-style:italic;font-weight:inherit}
+.s-claim.two{font-size:41px}
+
+/* ============================================================
+   THE SHORT DECK — short.html
+   Two slides carry what the long deck spends five on: one
+   bioreactor slide (hardware and results) and one plant slide
+   (agar, soil and hydroponics side by side).
+   ============================================================ */
+.sbr{display:grid;grid-template-columns:544px minmax(0,1fr) 412px;gap:34px}
+.sbr .col{display:flex;flex-direction:column;min-height:0}
+.sbr .spec{display:flex;gap:26px;margin:14px 0 0}
+.sbr .spec div{flex:1}
+.sbr .spec b{display:block;font-size:24px;font-weight:750;letter-spacing:-.02em;color:var(--green)}
+.sbr .spec span{display:block;font-size:15px;color:var(--ink-2);margin-top:1px;line-height:1.25}
+.sbr .charts{display:grid;gap:11px;flex:1;min-height:0}
+
+.spl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px}
+.spl .col{display:flex;flex-direction:column;min-height:0}
+.spl .hd{border-top:3px solid var(--ink);padding-top:9px;margin-bottom:13px;height:62px}
+.spl .hd h3{margin:0;font-size:22px;font-weight:750;letter-spacing:-.015em}
+.spl .hd p{margin:3px 0 0;font-size:15px;color:var(--ink-2);line-height:1.28}
+.spl .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.spl .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.spl .pv{font-size:17px;font-weight:650;color:var(--green);margin:13px 0 0;line-height:1.3}
+.spl .open{font-size:15px;line-height:1.34;color:var(--ink-2);margin:9px 0 0;
+  border-left:2px solid var(--line);padding-left:10px}

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ReLEAF · 5-minute judging presentation</title>
-<meta name="description" content="GEMS Taiwan ReLEAF: the nine slides of the five-minute judging presentation, each with its speaking script and the numbers behind it.">
-<link rel="stylesheet" href="assets/deck.css?v=5">
+<meta name="description" content="GEMS Taiwan ReLEAF: the ten slides of the five-minute judging presentation, each with its speaking script and the numbers behind it.">
+<link rel="stylesheet" href="assets/deck.css?v=11">
 <style>
 /* ---------- page shell ---------- */
 .wrap{max-width:1600px;margin:0 auto;padding:0 48px}
@@ -129,11 +129,11 @@ footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--lin
 
 <section class="hero">
   <div class="wrap">
-    <h1>Five minutes, <em>nine slides</em>, one system.</h1>
+    <h1>Five minutes, <em>ten slides</em>, one system.</h1>
     <p>On-site biomanufacturing of plant protectants: an optogenetic <i class="sp">Bacillus subtilis</i> chassis, a membrane bioreactor that keeps the cells in and lets the product out, and the plant assays that test what comes out of it.</p>
     <dl class="meta">
-      <div><dt>Runtime</dt><dd>5:00</dd></div>
-      <div><dt>Slides</dt><dd>9</dd></div>
+      <div><dt>Runtime</dt><dd id="stRun">4:50</dd></div>
+      <div><dt>Slides</dt><dd id="stN">10</dd></div>
       <div><dt>Team</dt><dd>GEMS Taiwan 2026</dd></div>
       <div><dt>Session</dt><dd>Jamboree judging</dd></div>
     </dl>
@@ -160,8 +160,8 @@ footer a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--lin
   </div>
 </footer>
 
-<script src="assets/nav.js?v=5"></script>
-<script src="assets/deck.js?v=5"></script>
+<script src="assets/nav.js?v=11"></script>
+<script src="assets/deck.js?v=11"></script>
 <script>
 document.getElementById('vsw').innerHTML = viewSwitcher('script');
 
@@ -171,6 +171,10 @@ document.getElementById('ways').innerHTML = VIEWS.map(v => {
     <b>${v.label}</b><p>${v.blurb}</p><i>${here ? 'You are here' : 'Open'}</i></a>`;
 }).join('');
 
+{ const tot = SLIDES.reduce((a,s)=>a+s.secs,0);
+  document.getElementById('stN').textContent = SLIDES.length;
+  document.getElementById('stRun').textContent = Math.floor(tot/60)+':'+String(tot%60).padStart(2,'0'); }
+
 document.getElementById('toc').innerHTML = SLIDES.map(s => `
 <li><a href="#s${s.n}">
   <span class="n">${String(s.n).padStart(2,'0')}</span>
@@ -179,7 +183,7 @@ document.getElementById('toc').innerHTML = SLIDES.map(s => `
   <span class="d">${s.secs}s</span>
 </a></li>`).join('');
 
-document.getElementById('rows').innerHTML = SLIDES.map(s => `
+document.getElementById('rows').innerHTML = SLIDES.map((s,i) => `
 <section class="row" id="s${s.n}">
   <div class="wrap">
     <div class="slideCol">
@@ -189,7 +193,7 @@ document.getElementById('rows').innerHTML = SLIDES.map(s => `
         <span class="t">${s.time} · ${s.secs}s</span>
       </div>
       <div class="card">
-        <div class="stageWrap"><div class="stage">${s.stage}</div></div>
+        <div class="stageWrap"><div class="stage">${stageHTML(SLIDES,i)}</div></div>
       </div>
       <div class="under">
         <span class="sub">${s.nav}</span>
